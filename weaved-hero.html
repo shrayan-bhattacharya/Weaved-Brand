@@ -1207,7 +1207,7 @@
   }
   .feat-headline {
     font-size: clamp(34px, 3.2vw, 52px);
-    font-weight: 300;
+    font-weight: 400;
     line-height: 1.1;
     letter-spacing: -0.02em;
     font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
@@ -1215,6 +1215,7 @@
   }
   .feat-headline em {
     font-style: italic;
+    font-weight: 300;
     color: #1F69FF;
     font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
   }
@@ -1334,56 +1335,6 @@
   }
 
   /* Parked MacBook */
-  .feat-parked-wrap {
-    position: absolute;
-    top: 7%;
-    right: 3%;
-    width: 240px;
-    z-index: 6;
-    opacity: 0;
-    transform: scale(0.88) translateY(-8px);
-    transition: opacity 0.9s ease, transform 0.9s ease;
-  }
-  .feat-parked-wrap.visible {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  .feat-parked-shell {
-    width: 240px;
-    background: linear-gradient(160deg, #d8d8dc 0%, #adadb2 100%);
-    border-radius: 10px 10px 3px 3px;
-    height: 155px;
-    padding: 6px 6px 10px;
-    box-shadow: 0 14px 28px rgba(10,24,48,0.18);
-  }
-  .feat-parked-screen {
-    background: #fff;
-    border-radius: 4px;
-    width: 100%; height: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-  .feat-parked-base {
-    width: 240px; height: 11px;
-    background: linear-gradient(180deg, #d8d8dc 0%, #9a9aa0 100%);
-    border-radius: 0 0 3px 3px;
-  }
-  .feat-parked-foot {
-    width: 80px; height: 4px;
-    background: #9a9aa0;
-    border-radius: 0 0 5px 5px;
-    margin: 0 auto;
-  }
-  .feat-parked-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(10,24,48,0.3);
-    text-align: center;
-    margin-top: 7px;
-  }
-
   /* ── Enterprise Search UI ── */
   .es-wrap {
     position: absolute; inset: 0;
@@ -1619,37 +1570,6 @@
   }
   .plat-cta-secondary:hover { border-color: #0A1830; }
 
-  /* ── Parked MacBook stack (Features 03+) ── */
-  .feat-parked-stack {
-    position: absolute; top: 80px; right: 2%;
-    display: flex; flex-direction: column; gap: 4px;
-    z-index: 6; opacity: 0; transform: translateY(-8px);
-    transition: opacity 0.9s ease, transform 0.9s ease;
-  }
-  .feat-parked-stack.visible { opacity: 1; transform: translateY(0); }
-  .feat-parked-unit { width: 88px; }
-  .feat-parked-unit-shell {
-    width: 88px; height: 44px;
-    background: linear-gradient(160deg, #d8d8dc 0%, #adadb2 100%);
-    border-radius: 5px 5px 2px 2px;
-    padding: 3px 3px 6px;
-    box-shadow: 0 4px 10px rgba(10,24,48,0.12);
-  }
-  .feat-parked-unit-screen {
-    background: #F8F9FA; border-radius: 2px;
-    width: 100%; height: 100%; overflow: hidden; position: relative;
-  }
-  .feat-parked-unit-base { width: 88px; height: 5px; background: linear-gradient(180deg, #d8d8dc, #9a9aa0); border-radius: 0 0 2px 2px; }
-  .feat-parked-unit-label {
-    font-family: 'JetBrains Mono', monospace; font-size: 6.5px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: rgba(10,24,48,0.28); text-align: center; margin-top: 3px; white-space: nowrap;
-  }
-  /* Parked unit mini screen bars */
-  .pu-bar { height: 4px; border-radius: 1px; background: rgba(31,105,255,0.15); margin: 3px 4px 0; }
-  .pu-bar:first-child { background: rgba(31,105,255,0.3); }
-  .pu-dot { width: 4px; height: 4px; border-radius: 50%; background: #1F69FF; display: inline-block; margin: 3px 4px 0; }
-
   /* ── Source labels along thread ── */
   .feat-source-labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
   .feat-src-label {
@@ -1793,23 +1713,6 @@
   .dba-sdot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
   .dba-stxt { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #444; letter-spacing: 0.09em; text-transform: uppercase; }
 
-  /* Parked screen mini ES UI */
-  .es-parked-mini {
-    position: absolute; inset: 0;
-    background: #F8F9FA;
-    overflow: hidden;
-  }
-  .es-parked-bar {
-    height: 14px; background: #fff; border-bottom: 1px solid #e8e8e8;
-    display: flex; align-items: center; padding: 0 5px; gap: 4px;
-  }
-  .es-parked-dot { width: 3px; height: 3px; border-radius: 50%; background: #1F69FF; }
-  .es-parked-title { font-family: 'JetBrains Mono', monospace; font-size: 5px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
-  .es-parked-rows { padding: 4px 5px; display: flex; flex-direction: column; gap: 3px; }
-  .es-parked-row { height: 8px; border-radius: 2px; background: #e8e8e8; }
-  .es-parked-row:first-child { background: rgba(31,105,255,0.15); width: 85%; }
-  .es-parked-row:nth-child(2) { width: 70%; }
-  .es-parked-row:nth-child(3) { width: 78%; }
 
 </style>
 </head>
@@ -2455,30 +2358,7 @@
     <section class="feat-section" id="feat-02-section">
       <div class="feat-sticky" id="feat-02-sticky">
 
-        <!-- Parked Feature 01 MacBook — top right corner -->
-        <div class="feat-parked-wrap" id="feat-01-parked">
-          <div class="feat-parked-shell">
-            <div class="feat-parked-screen">
-              <div class="es-parked-mini">
-                <div class="es-parked-bar">
-                  <span class="es-parked-dot"></span>
-                  <span class="es-parked-title">Enterprise Search</span>
-                </div>
-                <div class="es-parked-rows">
-                  <div class="es-parked-row"></div>
-                  <div class="es-parked-row"></div>
-                  <div class="es-parked-row"></div>
-                  <div class="es-parked-row" style="width:55%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="feat-parked-base"></div>
-          <div class="feat-parked-foot"></div>
-          <div class="feat-parked-label">01 · Enterprise Search</div>
-        </div>
-
-        <!-- Thread SVG: from upper-right (parked mac) → laptop on left -->
+        <!-- Thread SVG: right edge → laptop on left -->
         <svg class="feat-thread" id="feat-02-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
           <path class="feat-thread-path" d="M1440,120 C1160,190 880,310 480,450" stroke="#1F69FF" stroke-width="1.8"/>
           <path class="feat-thread-path" d="M1440,220 C1140,270 850,370 480,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
@@ -2586,20 +2466,6 @@
     <!-- ================================================ -->
     <section class="feat-section" id="feat-03-section">
       <div class="feat-sticky" id="feat-03-sticky">
-
-        <!-- Parked stack: F01 + F02 -->
-        <div class="feat-parked-stack" id="feat-03-stack">
-          <div class="feat-parked-unit">
-            <div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div>
-            <div class="feat-parked-unit-base"></div>
-            <div class="feat-parked-unit-label">01 / Enterprise Search</div>
-          </div>
-          <div class="feat-parked-unit">
-            <div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div>
-            <div class="feat-parked-unit-base"></div>
-            <div class="feat-parked-unit-label">02 / Sanitizer</div>
-          </div>
-        </div>
 
         <!-- Thread: left edge → right Mac (~960,450) -->
         <svg class="feat-thread" id="feat-03-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
@@ -2713,13 +2579,6 @@
     <section class="feat-section" id="feat-04-section">
       <div class="feat-sticky" id="feat-04-sticky">
 
-        <!-- Parked stack: F01 + F02 + F03 -->
-        <div class="feat-parked-stack" id="feat-04-stack">
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
-        </div>
-
         <!-- Thread: right edge → left Mac (~480,450) -->
         <svg class="feat-thread" id="feat-04-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
           <path class="feat-thread-path" d="M1440,145 C1158,208 875,318 480,450" stroke="#1F69FF" stroke-width="1.8"/>
@@ -2828,14 +2687,6 @@
     <section class="feat-section" id="feat-05-section">
       <div class="feat-sticky" id="feat-05-sticky">
 
-        <!-- Parked stack: F01–F04 -->
-        <div class="feat-parked-stack" id="feat-05-stack">
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:75%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">04 / Decision Intel.</div></div>
-        </div>
-
         <!-- Thread: left edge → right Mac (~960,450) -->
         <svg class="feat-thread" id="feat-05-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
           <path class="feat-thread-path" d="M0,165 C272,198 528,332 960,450" stroke="#1F69FF" stroke-width="1.8"/>
@@ -2934,15 +2785,6 @@
     <!-- ================================================ -->
     <section class="feat-section" id="feat-06-section">
       <div class="feat-sticky" id="feat-06-sticky">
-
-        <!-- Parked stack: F01–F05 -->
-        <div class="feat-parked-stack" id="feat-06-stack">
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:75%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">04 / Decision Intel.</div></div>
-          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:65%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">05 / Dashboards</div></div>
-        </div>
 
         <!-- Thread: right edge → left Mac (~480,450) -->
         <svg class="feat-thread" id="feat-06-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
@@ -3279,8 +3121,6 @@
   const feat02LidBack  = document.getElementById('feat-02-lid-back');
   const feat02Screen   = document.getElementById('feat-02-screen');
   const feat02Copy     = document.getElementById('feat-02-copy');
-  const feat01Parked   = document.getElementById('feat-01-parked');
-
   const feat03Section  = document.getElementById('feat-03-section');
   const feat03Thread   = document.getElementById('feat-03-thread');
   const feat03Wrapper  = document.getElementById('feat-03-wrapper');
@@ -3498,11 +3338,6 @@
     const tot2  = r2.height - window.innerHeight;
     const p2    = clamp(-r2.top / tot2, 0, 1);
 
-    // Parked mac appears as soon as feat02 begins
-    if (feat01Parked) {
-      feat01Parked.classList.toggle('visible', p2 > 0.04);
-    }
-
     driveFeatThreads(feat02Paths, p2);
 
     if (feat02Copy) feat02Copy.style.opacity = clamp((p2 - 0.22) / 0.14, 0, 1);
@@ -3513,8 +3348,6 @@
     if (!feat03Section) return;
     const r3  = feat03Section.getBoundingClientRect();
     const p3  = clamp(-r3.top / (r3.height - window.innerHeight), 0, 1);
-    const stk3 = document.getElementById('feat-03-stack');
-    if (stk3) stk3.classList.toggle('visible', p3 > 0.04);
     driveFeatThreads(feat03Paths, p3);
     driveSourceLabels('feat-03-labels', p3);
     if (feat03Copy) feat03Copy.style.opacity = clamp((p3 - 0.22) / 0.14, 0, 1);
@@ -3525,8 +3358,6 @@
     if (!feat04Section) return;
     const r4  = feat04Section.getBoundingClientRect();
     const p4  = clamp(-r4.top / (r4.height - window.innerHeight), 0, 1);
-    const stk4 = document.getElementById('feat-04-stack');
-    if (stk4) stk4.classList.toggle('visible', p4 > 0.04);
     driveFeatThreads(feat04Paths, p4);
     driveSourceLabels('feat-04-labels', p4);
     if (feat04Copy) feat04Copy.style.opacity = clamp((p4 - 0.22) / 0.14, 0, 1);
@@ -3537,8 +3368,6 @@
     if (!feat05Section) return;
     const r5  = feat05Section.getBoundingClientRect();
     const p5  = clamp(-r5.top / (r5.height - window.innerHeight), 0, 1);
-    const stk5 = document.getElementById('feat-05-stack');
-    if (stk5) stk5.classList.toggle('visible', p5 > 0.04);
     driveFeatThreads(feat05Paths, p5);
     driveSourceLabels('feat-05-labels', p5);
     if (feat05Copy) feat05Copy.style.opacity = clamp((p5 - 0.22) / 0.14, 0, 1);
@@ -3549,8 +3378,6 @@
     if (!feat06Section) return;
     const r6  = feat06Section.getBoundingClientRect();
     const p6  = clamp(-r6.top / (r6.height - window.innerHeight), 0, 1);
-    const stk6 = document.getElementById('feat-06-stack');
-    if (stk6) stk6.classList.toggle('visible', p6 > 0.04);
     driveFeatThreads(feat06Paths, p6);
     driveSourceLabels('feat-06-labels', p6);
     if (feat06Copy) feat06Copy.style.opacity = clamp((p6 - 0.22) / 0.14, 0, 1);
