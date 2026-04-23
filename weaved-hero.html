@@ -1,0 +1,3573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weaved — The Agentic Intelligence OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300;9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #F5F1E8;
+    color: #0A1830;
+    font-family: 'Fraunces', serif;
+    overflow-x: hidden;
+  }
+
+  /* ---------- GRAIN OVERLAY (entire site) ---------- */
+  .grain {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    z-index: 200;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- NAVIGATION ---------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 24px 56px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  .nav.scrolled {
+    background: rgba(245, 241, 232, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(10, 24, 48, 0.08);
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a { color: #0A1830; text-decoration: none; opacity: 0.7; transition: opacity 0.3s; }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    background: linear-gradient(135deg, #1F69FF 0%, #145CED 100%);
+    color: #FFFFFF;
+    padding: 12px 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 16px rgba(31, 105, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+  .nav-cta:hover {
+    background: linear-gradient(135deg, #5C8EFF 0%, #1F69FF 100%);
+    box-shadow: 0 6px 24px rgba(31, 105, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  /* ---------- ACT 1 · HERO INTRO (static) ---------- */
+  .act-intro {
+    min-height: 100vh;
+    padding: 140px 56px 80px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+  }
+
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 24px;
+    color: #0A1830;
+    opacity: 0.6;
+  }
+  .hero-meta span:before { content: "—"; margin-right: 12px; }
+
+  .hero-h1 {
+    font-size: clamp(64px, 8vw, 112px);
+    line-height: 0.95;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    margin-bottom: 40px;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+  .hero-h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  }
+  .hero-h1 .ampersand {
+    font-style: italic;
+    font-size: 1.4em;
+    line-height: 0.6;
+    vertical-align: -0.15em;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+  .hero-sub {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    line-height: 1.55;
+    max-width: 480px;
+    color: #0A1830;
+    opacity: 0.75;
+    margin-bottom: 48px;
+  }
+  .hero-sub span { font-style: italic; }
+
+  .cta-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .cta-primary {
+    background: linear-gradient(135deg, #1F69FF 0%, #145CED 100%);
+    color: #FFFFFF;
+    padding: 20px 36px;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(31, 105, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  .cta-primary:hover {
+    background: linear-gradient(135deg, #5C8EFF 0%, #1F69FF 100%);
+    box-shadow: 0 10px 32px rgba(31, 105, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  .cta-secondary {
+    color: #0A1830;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #0A1830;
+    padding-bottom: 4px;
+  }
+
+  /* Initial woven canvas (right side of hero) */
+  .hero-loom {
+    position: relative;
+    aspect-ratio: 4/5;
+    background: #EDE5D2;
+    overflow: hidden;
+  }
+  .hero-loom svg { width: 100%; height: 100%; display: block; }
+  .hero-loom .warp { stroke: #C8B89A; stroke-width: 1.5; opacity: 0.6; }
+  .hero-loom .weft-base { stroke: #0A1830; stroke-width: 2; opacity: 0.85; }
+  .hero-loom .weft-blue { stroke: #1F69FF; stroke-width: 2.5; opacity: 0.95; }
+  .hero-loom .weft-cream { stroke: #F5F1E8; stroke-width: 2; opacity: 0.95; }
+  /* Use pathLength=100 normalization so dash math is independent of actual stroke length */
+  .hero-loom .weft-base, .hero-loom .weft-blue, .hero-loom .weft-cream {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: weave-in 6s ease-in-out infinite;
+  }
+  /* Stagger non-blue weft lines naturally */
+  .hero-loom line:nth-child(2n)  { animation-delay: 0.4s; }
+  .hero-loom line:nth-child(3n)  { animation-delay: 0.8s; }
+  .hero-loom line:nth-child(5n)  { animation-delay: 1.6s; }
+  .hero-loom line:nth-child(7n)  { animation-delay: 2.4s; }
+  /* Blue weft lines: spaced 2s apart so only ONE is visible at a time
+     Animation "fully drawn" window: 40%-60% of 6s = 2.4s–3.6s.
+     With 2s stagger, windows never overlap. */
+  .hero-loom .weft-blue-1 { animation-delay: 0s !important; }
+  .hero-loom .weft-blue-2 { animation-delay: 2s !important; }
+  .hero-loom .weft-blue-3 { animation-delay: 4s !important; }
+  @keyframes weave-in {
+    0% { stroke-dashoffset: 100; }
+    40%, 60% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -100; }
+  }
+  .loom-caption {
+    position: absolute;
+    bottom: 20px; left: 20px; right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #F5F1E8;
+    background: rgba(10, 24, 48, 0.92);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 40px;
+    left: 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #0A1830;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .scroll-cue:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: #0A1830;
+    animation: scrollPulse 2s ease-in-out infinite;
+    transform-origin: left;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleX(0.3); opacity: 0.3; }
+    50% { transform: scaleX(1); opacity: 1; }
+  }
+
+  /* ---------- ACT 2 · THE LAPTOP SEQUENCE (scroll-pinned) ---------- */
+  .act-laptop {
+    position: relative;
+    height: 500vh; /* 5 viewports of scroll for the full sequence */
+  }
+
+  .laptop-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background: #F5F1E8;
+    /* No perspective here — headlines are siblings of the 3D laptop
+       so they must not be inside the 3D rendering context */
+  }
+
+  /* Floating threads that converge into the laptop */
+  .converging-threads {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .converging-threads svg {
+    width: 100%;
+    height: 100%;
+  }
+  .converging-threads .thread-path {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .converging-threads.active .thread-path {
+    opacity: 0.7;
+  }
+  .source-tag {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0A1830;
+    background: #F5F1E8;
+    border: 1px solid rgba(10, 24, 48, 0.3);
+    padding: 6px 10px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 3;
+  }
+  .converging-threads.active ~ .source-tag {
+    opacity: 1;
+  }
+  .source-tag.s1 { top: 22%; left: 8%; }
+  .source-tag.s2 { top: 38%; left: 4%; }
+  .source-tag.s3 { top: 58%; left: 6%; }
+  .source-tag.s4 { top: 18%; right: 8%; }
+  .source-tag.s5 { top: 42%; right: 5%; }
+  .source-tag.s6 { top: 64%; right: 9%; }
+
+  /* THE LAPTOP — pure CSS 3D
+     The structure is: a wrapper with perspective, containing the laptop base (static)
+     and the laptop screen (which rotates around its bottom edge to "open").
+     When closed: screen is rotated -95deg around its bottom edge (lying flat over the base, back facing up).
+     When open:   screen is rotated 0deg (standing upright, screen content visible to camera).
+  */
+  .laptop-wrapper {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    width: 760px;
+    height: 500px;
+    perspective: 1800px;
+    perspective-origin: 50% 45%;
+    --p: 0;
+    transform:
+      translate(-50%, -50%)
+      scale(calc(0.40 + (var(--p) * 0.50)));
+    z-index: 5;
+    transition: transform 0.05s linear;
+  }
+
+  .laptop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateX(6deg);
+  }
+
+  /* Laptop BASE — MacBook silver aluminum keyboard deck */
+  .laptop-base {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateZ(0);
+    width: 100%;
+    height: 24px;
+    background: linear-gradient(180deg, #d8d8dc 0%, #b8b8bd 50%, #9a9aa0 100%);
+    border-radius: 0 0 8px 8px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.75),
+      inset 0 -1px 0 rgba(0,0,0,0.18),
+      0 30px 60px rgba(10,24,48,0.35),
+      0 10px 20px rgba(10,24,48,0.2);
+    z-index: 1;
+  }
+  /* Rubber foot / bottom edge line */
+  .laptop-base:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 8%;
+    right: 8%;
+    height: 2px;
+    background: rgba(0,0,0,0.22);
+    border-radius: 0 0 8px 8px;
+  }
+  /* Hinge seam — 1px dark line at very top of base */
+  .laptop-base:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.30);
+  }
+
+  /* Laptop SCREEN — MacBook near-black thin-bezel frame */
+  .laptop-screen {
+    position: absolute;
+    left: 0;
+    bottom: 24px;
+    width: 100%;
+    height: calc(100% - 24px);
+    background: #0a0a0a;
+    border-radius: 14px 14px 6px 6px;
+    /* 10px top/sides, 14px bottom chin (standard MacBook proportions) */
+    padding: 10px 10px 14px 10px;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.9),
+      0 0 0 2.5px rgba(255,255,255,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      0 30px 60px rgba(10,24,48,0.35),
+      0 10px 20px rgba(10,24,48,0.2);
+    transform-origin: 50% 100%;
+    transform-style: preserve-3d;
+    --lid: 0;
+    transform: rotateX(calc(-95deg * (1 - var(--lid))));
+    transition: transform 0.05s linear;
+    z-index: 2;
+  }
+
+  /* MacBook Pro notch — 130px wide, bleeds into top bezel */
+  .laptop-screen:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 10px;
+    background: #0a0a0a;
+    border-radius: 0 0 12px 12px;
+    z-index: 10;
+  }
+
+  /* Camera dot — 4px, centered in the notch */
+  .laptop-screen:after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+    z-index: 11;
+  }
+
+  /* Screen glass — white product UI inside the MacBook frame */
+  .screen-content {
+    position: absolute;
+    inset: 0;
+    background: #FFFFFF;
+    border-radius: 9px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+  }
+
+  .lid-back {
+    position: absolute;
+    inset: 0;
+    /* Silver aluminum — matches the base, with a soft radial sheen
+       to simulate the anisotropic highlight of machined aluminium */
+    background:
+      radial-gradient(ellipse at 40% 38%, rgba(255,255,255,0.18) 0%, transparent 52%),
+      linear-gradient(160deg, #d8d8dc 0%, #c4c4c8 30%, #adadb2 60%, #b8b8bd 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateY(180deg);
+  }
+  .lid-back .logo-mark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 28px;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+    letter-spacing: -0.02em;
+    /* Laser-etched look: mid-grey, half opacity, no outline */
+    color: #6a6a70;
+    opacity: 0.5;
+    text-shadow:
+      0 1px 0 rgba(255,255,255,0.4),
+      0 -1px 0 rgba(0,0,0,0.1);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     WEAVED PRODUCT UI — inside the laptop screen only
+     All classes prefixed .w- to avoid global conflicts
+     Font: system sans-serif everywhere except .w-logo
+     ═══════════════════════════════════════════════════ */
+
+  /* Root wrapper fills screen-content */
+  .w-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    background: #fff;
+    overflow: hidden;
+    color: #111;
+    line-height: 1.4;
+  }
+
+  /* ── Top bar ── */
+  .w-topbar {
+    height: 32px;
+    min-height: 32px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 10px;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+  .w-topbar-left { display: flex; align-items: center; gap: 5px; }
+  .w-logo {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 400;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .w-bc-sep { color: #ccc; font-size: 11px; line-height: 1; }
+  .w-bc-label { font-size: 10px; font-weight: 500; color: #333; }
+  .w-topbar-right { display: flex; align-items: center; gap: 7px; }
+  .w-theme-btn {
+    width: 22px; height: 22px;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    color: #666; cursor: pointer; padding: 0;
+  }
+  .w-avatar {
+    width: 20px; height: 20px;
+    background: #1F69FF;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 7.5px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Body: left-rail + chat-list + main ── */
+  .w-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+
+  /* Left rail */
+  .w-rail {
+    width: 76px; min-width: 76px;
+    background: #F5F5F7;
+    border-right: 1px solid #e8e8e8;
+    display: flex; flex-direction: column;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .w-rail-back {
+    display: flex; align-items: center; gap: 3px;
+    padding: 8px 8px 6px;
+    color: #555; font-size: 9px; font-weight: 500;
+  }
+  .w-rail-items { flex: 1; padding: 2px 0; overflow: hidden; }
+  .w-nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 2px;
+    padding: 5px 4px;
+    color: #777; font-size: 8px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    text-align: center; line-height: 1.2;
+  }
+  .w-nav-item.active {
+    color: #1F69FF;
+    border-left-color: #1F69FF;
+    background: rgba(31,105,255,0.05);
+  }
+  .w-nav-item svg { flex-shrink: 0; }
+  .w-nav-item.active svg { stroke: #1F69FF; }
+  .w-rail-collapse {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 8px;
+    color: #999; font-size: 8px;
+    border-top: 1px solid #e8e8e8; cursor: pointer;
+  }
+
+  /* Chat list */
+  .w-chatlist {
+    width: 130px; min-width: 130px;
+    background: #fff;
+    border-right: 1px solid #e8e8e8;
+    display: flex; flex-direction: column;
+    overflow: hidden; padding: 7px 6px; gap: 2px;
+    flex-shrink: 0;
+  }
+  .w-new-chat {
+    display: flex; align-items: center; gap: 4px;
+    width: 100%; padding: 4px 8px;
+    background: #fff; border: 1px solid #e0e0e0;
+    border-radius: 5px; font-size: 9px; font-weight: 500;
+    color: #333; cursor: pointer; font-family: inherit;
+    margin-bottom: 5px;
+  }
+  .w-chat-item {
+    display: flex; align-items: flex-start; gap: 5px;
+    padding: 5px 5px; border-radius: 5px; cursor: pointer;
+  }
+  .w-chat-item.active { background: #EBF2FF; }
+  .w-chat-icon { margin-top: 1px; flex-shrink: 0; stroke: #aaa; }
+  .w-chat-item.active .w-chat-icon { stroke: #1F69FF; }
+  .w-chat-meta { flex: 1; min-width: 0; }
+  .w-chat-title {
+    font-size: 8.5px; font-weight: 500; color: #222;
+    line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .w-chat-item.active .w-chat-title { color: #1F69FF; }
+  .w-chat-time { font-size: 7.5px; color: #bbb; margin-top: 2px; }
+
+  /* Main content column */
+  .w-main {
+    flex: 1; display: flex; flex-direction: column;
+    background: #fff; overflow: hidden; min-width: 0;
+  }
+  .w-main-toprow {
+    display: flex; justify-content: flex-end; align-items: center;
+    padding: 6px 12px 3px; flex-shrink: 0;
+  }
+  .w-search-toggle { display: flex; align-items: center; gap: 5px; font-size: 8.5px; color: #777; }
+  .w-toggle-pill {
+    width: 24px; height: 13px; background: #d4d4d4;
+    border-radius: 7px; position: relative; flex-shrink: 0;
+  }
+  .w-toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 9px; height: 9px; background: #fff;
+    border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.2);
+  }
+
+  /* Messages scroll area */
+  .w-messages {
+    flex: 1; padding: 6px 12px 4px;
+    overflow: hidden; display: flex;
+    flex-direction: column; gap: 7px; min-height: 0;
+  }
+  .w-msg-user-wrap {
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 3px;
+  }
+  .w-msg-bubble {
+    background: #1F69FF; color: #fff;
+    font-size: 9.5px; line-height: 1.4;
+    padding: 6px 10px;
+    border-radius: 10px 10px 2px 10px;
+    max-width: 68%;
+  }
+  .w-msg-meta {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 7.5px; color: #bbb;
+  }
+  .w-avatar-sm {
+    width: 15px; height: 15px; background: #1F69FF;
+    border-radius: 50%; color: #fff; font-size: 6.5px;
+    font-weight: 700; display: flex;
+    align-items: center; justify-content: center;
+  }
+
+  /* Status row */
+  .w-status-row {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 8.5px; color: #999;
+  }
+  .w-expand { margin-left: 2px; stroke: #ccc; }
+
+  /* Results table */
+  .w-table-wrap {
+    border: 1px solid #ebebeb; border-radius: 5px;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .w-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+  .w-table th {
+    background: #fafafa; color: #999;
+    font-weight: 600; font-size: 7.5px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 4px 8px; text-align: left;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .w-table td {
+    padding: 3.5px 8px; border-bottom: 1px solid #f3f3f3;
+    color: #333; font-size: 8.5px;
+  }
+  .w-table tr:last-child td { border-bottom: none; }
+  .w-table td:first-child { color: #bbb; font-weight: 600; width: 24px; }
+  .w-table .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    text-align: right; font-weight: 600; color: #111;
+  }
+  .w-table th.num { text-align: right; }
+
+  /* Bar chart */
+  .w-chart-wrap {
+    background: #FAFAFB; border: 1px solid #ebebeb;
+    border-radius: 5px; padding: 7px 9px; flex-shrink: 0;
+  }
+  .w-chart-title { font-size: 8.5px; font-weight: 600; color: #333; margin-bottom: 6px; }
+  .w-chart { display: flex; flex-direction: column; gap: 4px; }
+  .w-bar-row { display: flex; align-items: center; gap: 6px; }
+  .w-bar-label {
+    font-size: 8px; color: #666;
+    width: 80px; min-width: 80px;
+    text-align: right; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .w-bar-track {
+    flex: 1; height: 9px;
+    background: #e8e8e8; overflow: hidden;
+  }
+  .w-bar { height: 100%; background: #1F69FF; }
+  .w-bar-val { font-size: 7.5px; color: #888; width: 30px; white-space: nowrap; }
+
+  /* Input bar */
+  .w-input-area {
+    flex-shrink: 0; padding: 5px 9px 3px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .w-input-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: #F5F5F7; border-radius: 18px;
+    padding: 4px 4px 4px 9px;
+  }
+  .w-input-placeholder {
+    flex: 1; font-size: 8.5px; color: #bbb;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .w-input-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .w-auto-btn {
+    font-size: 8px; color: #666;
+    background: #fff; border: 1px solid #e0e0e0;
+    border-radius: 4px; padding: 2px 5px; white-space: nowrap;
+    font-family: inherit;
+  }
+  .w-send-btn {
+    width: 21px; height: 21px; background: #1F69FF;
+    border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; padding: 0;
+  }
+  .w-disclaimer {
+    font-size: 7.5px; color: #ccc;
+    text-align: center; padding: 3px 0 1px;
+  }
+
+  /* HEADLINE OVERLAY (above the laptop, fades in/out by act) */
+  /* All stage headlines stack at the same position; only one is .visible at a time */
+  .stage-headline {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    width: min(820px, 90vw);
+  }
+  .stage-headline.visible {
+    opacity: 1;
+  }
+  .stage-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(10, 24, 48, 0.6);
+    margin-bottom: 16px;
+  }
+  .stage-h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: #0A1830;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .stage-h2 em {
+    font-style: italic;
+    color: #1F69FF;
+    font-weight: 300;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+
+  /* Bottom progress indicator */
+  .scroll-progress {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 90;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .scroll-progress.visible { opacity: 1; }
+  .scroll-progress span {
+    width: 24px; height: 2px;
+    background: rgba(10, 24, 48, 0.2);
+    transition: background 0.3s;
+  }
+  .scroll-progress span.active {
+    background: #1F69FF;
+  }
+
+  /* ---------- ACT 3 · INSIDE THE PRODUCT (still in laptop, scrolling content) ---------- */
+  .act-inside {
+    position: relative;
+    background: #EDE5D2;
+    padding: 200px 56px 160px;
+  }
+  .inside-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(10, 24, 48, 0.6);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .inside-h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.98;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    text-align: center;
+    margin: 0 auto 80px;
+    max-width: 1000px;
+    font-variation-settings: "opsz" 144, "SOFT" 40;
+  }
+  .inside-h2 em {
+    font-style: italic;
+    color: #1F69FF;
+    font-weight: 300;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+
+  /* The 12 agents grid */
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(10, 24, 48, 0.15);
+    max-width: 1280px;
+    margin: 0 auto;
+    border: 1px solid rgba(10, 24, 48, 0.15);
+  }
+  .agent-card {
+    background: #EDE5D2;
+    padding: 32px 24px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.4s, color 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .agent-card:hover {
+    background: #0A1830;
+    color: #F5F1E8;
+  }
+  .agent-card:hover .agent-num,
+  .agent-card:hover .agent-desc {
+    color: rgba(245, 241, 232, 0.7);
+  }
+  .agent-card:hover .agent-name em {
+    color: #5C8EFF;
+  }
+  /* Hover thread reveal */
+  .agent-card:before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 2px;
+    background: #1F69FF;
+    transition: left 0.5s ease;
+  }
+  .agent-card:hover:before {
+    left: 0;
+  }
+  .agent-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(10, 24, 48, 0.4);
+    transition: color 0.4s;
+  }
+  .agent-name {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 14px 0 8px;
+    font-variation-settings: "opsz" 144, "SOFT" 40;
+  }
+  .agent-name em {
+    font-style: italic;
+    color: #1F69FF;
+    font-weight: 300;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+    transition: color 0.4s;
+  }
+  .agent-desc {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(10, 24, 48, 0.7);
+    transition: color 0.4s;
+  }
+
+  /* ---------- ACT 4 · DEPLOYMENT (still inside) ---------- */
+  .act-deploy {
+    background: #EDE5D2;
+    padding: 160px 56px;
+    position: relative;
+  }
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1280px;
+    margin: 80px auto 0;
+  }
+  .deploy-card {
+    border: 1px solid rgba(10, 24, 48, 0.2);
+    padding: 40px 32px;
+    background: #F5F1E8;
+    position: relative;
+  }
+  .deploy-card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(10, 24, 48, 0.6);
+    margin-bottom: 16px;
+  }
+  .deploy-num {
+    font-family: 'Fraunces', serif;
+    font-size: 96px;
+    line-height: 0.9;
+    font-weight: 400;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+    font-style: italic;
+  }
+  .deploy-num-unit {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    color: #0A1830;
+    font-style: italic;
+    margin-left: 4px;
+    vertical-align: 30px;
+  }
+  .deploy-desc {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(10, 24, 48, 0.75);
+    margin-top: 24px;
+  }
+  .deploy-stages {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(10, 24, 48, 0.5);
+  }
+  .deploy-stages span {
+    flex: 1;
+    border-top: 2px solid #1F69FF;
+    padding-top: 8px;
+  }
+
+  /* ---------- ACT 5 · CTA OUTRO ---------- */
+  .act-cta {
+    padding: 200px 56px;
+    background: #EDE5D2;
+    color: #0A1830;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Subtle warp-thread texture echoes the hero loom panel */
+  .act-cta:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0,
+        transparent 38px,
+        rgba(10, 24, 48, 0.03) 38px,
+        rgba(10, 24, 48, 0.03) 39px
+      );
+    pointer-events: none;
+  }
+  .cta-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(10, 24, 48, 0.45);
+    margin-bottom: 24px;
+  }
+  .cta-h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(56px, 8vw, 120px);
+    line-height: 0.95;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    color: #0A1830;
+    max-width: 1000px;
+    margin: 0 auto 48px;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .cta-h2 em {
+    font-style: italic;
+    color: #1F69FF;
+    font-weight: 300;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+  .cta-row-bottom {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  .cta-final-primary {
+    background: linear-gradient(135deg, #1F69FF 0%, #145CED 100%);
+    color: #FFFFFF;
+    padding: 24px 44px;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    box-shadow:
+      0 8px 32px rgba(31, 105, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cta-final-primary:hover {
+    background: linear-gradient(135deg, #3d7dff 0%, #1F69FF 100%);
+    box-shadow: 0 12px 40px rgba(31, 105, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  .cta-final-secondary {
+    color: #0A1830;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid rgba(10, 24, 48, 0.3);
+    padding: 22px 40px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+  }
+  .cta-final-secondary:hover {
+    border-color: #1F69FF;
+    color: #1F69FF;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .act-intro { grid-template-columns: 1fr; padding: 120px 24px 60px; }
+    .scroll-cue { display: none; }
+    .laptop-wrapper {
+      width: 90vw;
+      height: 56vw;
+    }
+    .stage-h2 { font-size: 32px; padding: 0 24px; }
+    .source-tag { display: none; }
+    .agents-grid { grid-template-columns: repeat(2, 1fr); }
+    .deploy-grid { grid-template-columns: 1fr; }
+    .act-deploy, .act-inside { padding: 100px 24px; }
+    .act-cta { padding: 120px 24px; }
+  }
+
+  /* ============================================
+     PLATFORM PAGE
+     ============================================ */
+
+  /* Active nav link */
+  .nav-links a.nav-active { opacity: 1 !important; color: #1F69FF; }
+
+  /* Platform transition / hero */
+  .plat-transition {
+    min-height: 65vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 10vw;
+    border-bottom: 1px solid rgba(10,24,48,0.08);
+  }
+  .plat-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(10,24,48,0.4);
+    margin-bottom: 36px;
+  }
+  .plat-h1 {
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+    max-width: 820px;
+  }
+  .plat-h1 em {
+    font-style: italic;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "SOFT" 70, "WONK" 1;
+  }
+  .plat-lead {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: rgba(10,24,48,0.55);
+    max-width: 520px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Feature section scroll-pinned layout ── */
+  .feat-section {
+    position: relative;
+    height: 360vh;
+  }
+  .feat-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #F5F1E8;
+  }
+
+  /* Thread SVG overlay */
+  .feat-thread {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .feat-thread-path {
+    fill: none;
+    stroke-width: 1.5;
+    opacity: 0;
+    stroke-linecap: round;
+  }
+
+  /* Copy block */
+  .feat-copy {
+    position: absolute;
+    left: 7vw;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    max-width: 400px;
+    opacity: 0;
+  }
+  .feat-copy-right {
+    left: auto;
+    right: 7vw;
+    text-align: right;
+  }
+  .feat-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #1F69FF;
+    margin-bottom: 20px;
+  }
+  .feat-headline {
+    font-size: clamp(34px, 3.2vw, 52px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
+    margin-bottom: 20px;
+  }
+  .feat-headline em {
+    font-style: italic;
+    color: #1F69FF;
+    font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+  }
+  .feat-body {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.9;
+    color: rgba(10,24,48,0.6);
+    margin-bottom: 20px;
+    letter-spacing: 0.01em;
+  }
+  .feat-proof {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+  .feat-proof li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(10,24,48,0.45);
+    padding: 7px 0;
+    border-top: 1px solid rgba(10,24,48,0.09);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .feat-proof li::before { content: '—'; color: #1F69FF; flex-shrink: 0; }
+  .feat-copy-right .feat-proof li { flex-direction: row-reverse; }
+  .feat-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #1F69FF;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(31,105,255,0.35);
+    padding-bottom: 4px;
+    transition: border-color 0.3s;
+    display: inline-block;
+  }
+  .feat-cta:hover { border-color: #1F69FF; }
+
+  /* Feature MacBook wrapper */
+  .feat-mac-wrap {
+    position: absolute;
+    right: 7vw;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  .feat-mac-left {
+    right: auto;
+    left: 7vw;
+  }
+  .feat-laptop-wrapper {
+    width: 580px;
+    height: 390px;
+    perspective: 1400px;
+    perspective-origin: 50% 42%;
+    --plid: 0;
+    --pscale: 0;
+    transform: scale(calc(0.50 + var(--pscale) * 0.50));
+    transform-origin: center center;
+    transition: transform 0.05s linear;
+  }
+  .feat-lid {
+    position: relative;
+    width: 580px;
+    height: 370px;
+    transform-style: preserve-3d;
+    transform-origin: 50% 100%;
+    transform: rotateX(calc(-90deg + var(--plid) * 90deg));
+    transition: transform 0.05s linear;
+  }
+  .feat-lid-back {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 40% 38%, rgba(255,255,255,0.18) 0%, transparent 52%),
+      linear-gradient(160deg, #d8d8dc 0%, #c4c4c8 30%, #adadb2 60%, #b8b8bd 100%);
+    border-radius: 12px 12px 4px 4px;
+    backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.2s;
+  }
+  .feat-logo-mark {
+    font-family: -apple-system, sans-serif;
+    font-size: 26px;
+    color: #6a6a70;
+    opacity: 0.38;
+  }
+  .feat-screen {
+    position: absolute; inset: 0;
+    background: #0a0a0a;
+    border-radius: 12px 12px 4px 4px;
+    padding: 8px 8px 12px 8px;
+  }
+  .feat-screen-content {
+    background: #FFFFFF;
+    border-radius: 6px;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feat-base {
+    width: 580px; height: 16px;
+    background: linear-gradient(180deg, #d8d8dc 0%, #b8b8bd 50%, #9a9aa0 100%);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 20px 48px rgba(10,24,48,0.22), 0 8px 16px rgba(10,24,48,0.14);
+  }
+  .feat-foot {
+    width: 160px; height: 5px;
+    background: linear-gradient(180deg, #b0b0b5, #9a9aa0);
+    border-radius: 0 0 7px 7px;
+    margin: 0 auto;
+  }
+
+  /* Parked MacBook */
+  .feat-parked-wrap {
+    position: absolute;
+    top: 7%;
+    right: 3%;
+    width: 240px;
+    z-index: 6;
+    opacity: 0;
+    transform: scale(0.88) translateY(-8px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .feat-parked-wrap.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  .feat-parked-shell {
+    width: 240px;
+    background: linear-gradient(160deg, #d8d8dc 0%, #adadb2 100%);
+    border-radius: 10px 10px 3px 3px;
+    height: 155px;
+    padding: 6px 6px 10px;
+    box-shadow: 0 14px 28px rgba(10,24,48,0.18);
+  }
+  .feat-parked-screen {
+    background: #fff;
+    border-radius: 4px;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  .feat-parked-base {
+    width: 240px; height: 11px;
+    background: linear-gradient(180deg, #d8d8dc 0%, #9a9aa0 100%);
+    border-radius: 0 0 3px 3px;
+  }
+  .feat-parked-foot {
+    width: 80px; height: 4px;
+    background: #9a9aa0;
+    border-radius: 0 0 5px 5px;
+    margin: 0 auto;
+  }
+  .feat-parked-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(10,24,48,0.3);
+    text-align: center;
+    margin-top: 7px;
+  }
+
+  /* ── Enterprise Search UI ── */
+  .es-wrap {
+    position: absolute; inset: 0;
+    background: #F8F9FA;
+    font-family: -apple-system, "Segoe UI", sans-serif;
+    font-size: 11px;
+    display: flex; flex-direction: column;
+  }
+  .es-topbar {
+    height: 34px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex; align-items: center; padding: 0 12px;
+    gap: 10px; flex-shrink: 0;
+  }
+  .es-logo {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: #1F69FF; font-size: 12px;
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+  .es-topbar-sep { color: #ddd; }
+  .es-topbar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .es-body { display: flex; flex: 1; overflow: hidden; }
+  .es-sidebar {
+    width: 120px; background: #fff; border-right: 1px solid #e8e8e8;
+    padding: 10px 0; flex-shrink: 0;
+  }
+  .es-sidebar-item {
+    padding: 5px 10px;
+    font-size: 9.5px; color: #888; cursor: pointer;
+    letter-spacing: 0.03em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .es-sidebar-item.active {
+    color: #1F69FF; background: rgba(31,105,255,0.05);
+    border-left: 2px solid #1F69FF; padding-left: 8px;
+  }
+  .es-sidebar-icon { font-size: 11px; }
+  .es-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .es-search-bar-wrap {
+    padding: 10px 12px 0; background: #fff; border-bottom: 1px solid #e8e8e8;
+  }
+  .es-search-bar {
+    display: flex; align-items: center; gap: 7px;
+    background: #F5F1E8; border-radius: 5px; padding: 6px 10px; margin-bottom: 8px;
+  }
+  .es-search-icon { color: #1F69FF; font-size: 11px; }
+  .es-search-text {
+    font-size: 10.5px; color: #0A1830; flex: 1;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em;
+  }
+  .es-search-cursor {
+    display: inline-block; width: 1px; height: 11px;
+    background: #1F69FF;
+    animation: es-blink 1s step-end infinite;
+    vertical-align: middle; margin-left: 1px;
+  }
+  @keyframes es-blink { 50% { opacity: 0; } }
+  .es-filter-row { display: flex; gap: 5px; padding: 0 0 8px; flex-wrap: wrap; }
+  .es-filter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 3px;
+    background: #eee; color: #777; cursor: pointer;
+  }
+  .es-filter.active { background: rgba(31,105,255,0.1); color: #1F69FF; }
+  .es-results {
+    flex: 1; overflow-y: auto; padding: 8px 12px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .es-result-card {
+    background: #fff; border-radius: 5px; padding: 9px 11px;
+    border: 1px solid #e8e8e8;
+  }
+  .es-result-card:first-child { border-color: rgba(31,105,255,0.28); }
+  .es-result-header { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+  .es-result-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 2px 5px; border-radius: 2px;
+    background: rgba(31,105,255,0.08); color: #1F69FF;
+  }
+  .es-result-source.sql { background: rgba(10,24,48,0.05); color: #777; }
+  .es-result-source.doc { background: rgba(200,184,154,0.22); color: #7a6a50; }
+  .es-result-title { font-size: 10px; font-weight: 600; color: #0A1830; }
+  .es-result-excerpt { font-size: 9.5px; color: #666; line-height: 1.55; }
+  .es-result-highlight {
+    background: rgba(31,105,255,0.09); border-radius: 2px;
+    padding: 0 2px; color: #1F69FF; font-weight: 500;
+  }
+  .es-result-meta { margin-top: 4px; display: flex; gap: 10px; }
+  .es-result-meta-item {
+    font-family: 'JetBrains Mono', monospace; font-size: 7.5px;
+    color: #bbb; letter-spacing: 0.07em;
+  }
+  .es-status-bar {
+    padding: 5px 12px; background: #fff; border-top: 1px solid #e8e8e8;
+    display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+  }
+  .es-status-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .es-status-text {
+    font-family: 'JetBrains Mono', monospace; font-size: 7.5px;
+    color: #bbb; letter-spacing: 0.09em; text-transform: uppercase;
+  }
+  .es-result-count {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px; color: #bbb; letter-spacing: 0.09em;
+  }
+
+  /* ── Sanitizer UI ── */
+  .san-wrap {
+    position: absolute; inset: 0;
+    background: #fff;
+    font-family: -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column;
+  }
+  .san-topbar {
+    height: 34px; background: #fff; border-bottom: 1px solid #e8e8e8;
+    display: flex; align-items: center; padding: 0 12px; gap: 10px; flex-shrink: 0;
+  }
+  .san-logo {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: #1F69FF; font-size: 12px; font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+  .san-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .san-tabs {
+    display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; padding: 0 12px; flex-shrink: 0;
+  }
+  .san-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 7px 0; margin-right: 18px;
+    color: #bbb; cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .san-tab.active { color: #1F69FF; border-bottom-color: #1F69FF; }
+  .san-body { flex: 1; display: flex; overflow: hidden; }
+  .san-panel { flex: 1; padding: 10px 12px; overflow-y: auto; }
+  .san-panel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .san-panel-label.raw { color: #dc2626; }
+  .san-panel-label.clean { color: #16a34a; }
+  .san-divider { width: 1px; background: #e8e8e8; flex-shrink: 0; }
+  .san-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; line-height: 1.85; color: #444; letter-spacing: 0.02em;
+  }
+  .san-pii {
+    background: rgba(239,68,68,0.1); border-radius: 2px; padding: 0 2px;
+    color: #dc2626; border-bottom: 1px dashed rgba(239,68,68,0.4);
+  }
+  .san-mask {
+    background: rgba(34,197,94,0.1); border-radius: 2px; padding: 0 2px;
+    color: #16a34a; font-weight: 600; letter-spacing: 0.03em;
+  }
+  .san-stats-row {
+    display: flex; gap: 0; border-top: 1px solid #e8e8e8; flex-shrink: 0;
+  }
+  .san-stat {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 6px 4px; gap: 2px; border-right: 1px solid #f0f0f0;
+  }
+  .san-stat:last-child { border-right: none; }
+  .san-stat-num { font-size: 14px; font-weight: 700; color: #1F69FF; font-family: 'JetBrains Mono', monospace; }
+  .san-stat-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 6.5px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #bbb;
+    text-align: center;
+  }
+  .san-audit-row {
+    padding: 5px 12px; background: #F8F9FA; border-top: 1px solid #e8e8e8;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  .san-audit-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .san-audit-text {
+    font-family: 'JetBrains Mono', monospace; font-size: 7.5px;
+    color: #bbb; letter-spacing: 0.09em; text-transform: uppercase;
+  }
+
+  /* Platform CTA */
+  .plat-cta-section {
+    background: #EDE5D2; padding: 160px 10vw; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .plat-cta-section::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(10,24,48,0.025) 38px, rgba(10,24,48,0.025) 39px),
+      repeating-linear-gradient(0deg,  transparent 0, transparent 38px, rgba(10,24,48,0.025) 38px, rgba(10,24,48,0.025) 39px);
+  }
+  .plat-cta-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(10,24,48,0.45); margin-bottom: 24px;
+    position: relative;
+  }
+  .plat-cta-h2 {
+    font-size: clamp(44px, 5vw, 76px); font-weight: 300;
+    line-height: 1.08; letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+    margin-bottom: 48px; position: relative;
+  }
+  .plat-cta-h2 em {
+    font-style: italic; color: #1F69FF;
+    font-variation-settings: "opsz" 144, "SOFT" 70, "WONK" 1;
+  }
+  .plat-cta-row {
+    display: flex; gap: 16px; justify-content: center; align-items: center; position: relative;
+  }
+  .plat-cta-primary {
+    background: linear-gradient(135deg, #1F69FF 0%, #145CED 100%);
+    color: #fff; padding: 18px 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 6px 24px rgba(31,105,255,0.35);
+    transition: all 0.3s;
+  }
+  .plat-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(31,105,255,0.5); }
+  .plat-cta-secondary {
+    color: #0A1830; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    text-decoration: none; border: 1px solid rgba(10,24,48,0.25);
+    padding: 18px 36px; transition: all 0.3s;
+  }
+  .plat-cta-secondary:hover { border-color: #0A1830; }
+
+  /* ── Parked MacBook stack (Features 03+) ── */
+  .feat-parked-stack {
+    position: absolute; top: 80px; right: 2%;
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 6; opacity: 0; transform: translateY(-8px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .feat-parked-stack.visible { opacity: 1; transform: translateY(0); }
+  .feat-parked-unit { width: 88px; }
+  .feat-parked-unit-shell {
+    width: 88px; height: 44px;
+    background: linear-gradient(160deg, #d8d8dc 0%, #adadb2 100%);
+    border-radius: 5px 5px 2px 2px;
+    padding: 3px 3px 6px;
+    box-shadow: 0 4px 10px rgba(10,24,48,0.12);
+  }
+  .feat-parked-unit-screen {
+    background: #F8F9FA; border-radius: 2px;
+    width: 100%; height: 100%; overflow: hidden; position: relative;
+  }
+  .feat-parked-unit-base { width: 88px; height: 5px; background: linear-gradient(180deg, #d8d8dc, #9a9aa0); border-radius: 0 0 2px 2px; }
+  .feat-parked-unit-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 6.5px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(10,24,48,0.28); text-align: center; margin-top: 3px; white-space: nowrap;
+  }
+  /* Parked unit mini screen bars */
+  .pu-bar { height: 4px; border-radius: 1px; background: rgba(31,105,255,0.15); margin: 3px 4px 0; }
+  .pu-bar:first-child { background: rgba(31,105,255,0.3); }
+  .pu-dot { width: 4px; height: 4px; border-radius: 50%; background: #1F69FF; display: inline-block; margin: 3px 4px 0; }
+
+  /* ── Source labels along thread ── */
+  .feat-source-labels { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .feat-src-label {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #1F69FF; opacity: 0; transition: opacity 0.5s ease; white-space: nowrap;
+  }
+  .feat-src-label.visible { opacity: 0.75; }
+
+  /* ── Knowledge Graph UI (kg-) ── */
+  .kg-wrap { position: absolute; inset: 0; background: #F8F9FA; display: flex; flex-direction: column; font-family: -apple-system,"Segoe UI",sans-serif; }
+  .kg-topbar { height: 34px; background: #fff; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+  .kg-logo { font-family: 'Fraunces', serif; font-style: italic; color: #1F69FF; font-size: 12px; font-variation-settings: "opsz" 144, "WONK" 1; }
+  .kg-sep { color: #ddd; }
+  .kg-bc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase; }
+  .kg-body { display: flex; flex: 1; overflow: hidden; }
+  .kg-rail { width: 52px; background: #fff; border-right: 1px solid #e8e8e8; padding: 8px 0; flex-shrink: 0; }
+  .kg-rail-item { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #aaa; }
+  .kg-rail-item.active { color: #1F69FF; background: rgba(31,105,255,0.06); border-left: 2px solid #1F69FF; }
+  .kg-main { flex: 1; display: flex; flex-direction: column; padding: 6px 8px; overflow: hidden; }
+  .kg-query-wrap { background: #fff; border: 1px solid #e8e8e8; border-radius: 5px; padding: 4px 8px; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-shrink: 0; }
+  .kg-query-icon { color: #1F69FF; font-size: 10px; }
+  .kg-query-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #0A1830; flex: 1; min-height: 12px; }
+  .kg-cursor { display: inline-block; width: 1px; height: 10px; background: #1F69FF; animation: es-blink 1s step-end infinite; vertical-align: middle; }
+  .kg-graph-area { flex: 1; border: 1px solid #e8e8e8; border-radius: 5px; background: #fff; overflow: hidden; position: relative; margin-bottom: 6px; }
+  .kg-graph-area svg { width: 100%; height: 100%; }
+  .kg-edge { stroke: #e0e0e0; stroke-width: 1; fill: none; transition: stroke 0.6s, stroke-width 0.6s; }
+  .kg-edge-hl { stroke: #e0e0e0; stroke-width: 1; fill: none; transition: stroke 0.6s, stroke-width 0.6s; }
+  .kg-graph-area.lit .kg-edge-hl { stroke: #1F69FF; stroke-width: 2; }
+  .kg-node-doc { fill: #eeeeee; stroke: #ccc; stroke-width: 1; rx: 2; transition: fill 0.6s, stroke 0.6s; }
+  .kg-node-person { fill: #eeeeee; stroke: #ccc; stroke-width: 1; transition: fill 0.6s, stroke 0.6s; }
+  .kg-node-concept { fill: #eeeeee; stroke: #ccc; stroke-width: 1; transition: fill 0.6s, stroke 0.6s; }
+  .kg-graph-area.lit .kg-node-doc.hl { fill: rgba(31,105,255,0.12); stroke: #1F69FF; }
+  .kg-graph-area.lit .kg-node-person.hl { fill: rgba(31,105,255,0.15); stroke: #1F69FF; }
+  .kg-graph-area.lit .kg-node-concept.hl { fill: rgba(31,105,255,0.12); stroke: #1F69FF; }
+  .kg-label { font-size: 6px; fill: #bbb; text-anchor: middle; font-family: -apple-system, sans-serif; transition: fill 0.6s; }
+  .kg-init { font-size: 7px; fill: #aaa; text-anchor: middle; dominant-baseline: central; font-family: -apple-system, sans-serif; transition: fill 0.6s; }
+  .kg-graph-area.lit .kg-label.hl { fill: #1F69FF; }
+  .kg-graph-area.lit .kg-init.hl { fill: #1F69FF; }
+  .kg-answer { background: #fff; border: 1px solid rgba(31,105,255,0.22); border-radius: 5px; padding: 6px 8px; opacity: 0; flex-shrink: 0; }
+  .kg-answer-text { font-size: 9px; color: #444; line-height: 1.55; }
+  .kg-chip { display: inline-block; background: rgba(31,105,255,0.08); color: #1F69FF; border-radius: 3px; padding: 0 4px; font-size: 8px; font-family: 'JetBrains Mono', monospace; }
+  .kg-status { padding: 4px 8px; background: #fff; border-top: 1px solid #e8e8e8; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .kg-dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .kg-stat { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #bbb; letter-spacing: 0.09em; text-transform: uppercase; }
+
+  /* ── Decision Intelligence UI (di-) ── */
+  .di-wrap { position: absolute; inset: 0; background: #F8F9FA; display: flex; flex-direction: column; font-family: -apple-system,"Segoe UI",sans-serif; }
+  .di-topbar { height: 34px; background: #fff; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+  .di-logo { font-family: 'Fraunces', serif; font-style: italic; color: #1F69FF; font-size: 12px; font-variation-settings: "opsz" 144, "WONK" 1; }
+  .di-sep { color: #ddd; }
+  .di-bc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase; }
+  .di-body { display: flex; flex: 1; overflow: hidden; }
+  .di-rail { width: 52px; background: #fff; border-right: 1px solid #e8e8e8; padding: 8px 0; flex-shrink: 0; }
+  .di-rail-item { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #aaa; }
+  .di-rail-item.active { color: #1F69FF; background: rgba(31,105,255,0.06); border-left: 2px solid #1F69FF; }
+  .di-main { flex: 1; display: flex; flex-direction: column; padding: 6px 8px; overflow: hidden; }
+  .di-cards { display: flex; gap: 6px; flex: 1; overflow: hidden; margin-bottom: 6px; }
+  .di-card { flex: 1; background: #fff; border: 1px solid #e8e8e8; border-radius: 5px; padding: 7px; display: flex; flex-direction: column; gap: 3px; opacity: 0; position: relative; overflow: hidden; transition: border-color 0.4s; }
+  .di-card.rec { border-color: #1F69FF; border-width: 2px; }
+  .di-rec-pill { position: absolute; top: 5px; right: 5px; background: #1F69FF; color: #fff; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 6px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 4px; opacity: 0; transition: opacity 0.4s; }
+  .di-card-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; }
+  .di-score { font-size: 20px; font-weight: 700; color: #0A1830; font-family: 'JetBrains Mono', monospace; line-height: 1.1; }
+  .di-score span { font-size: 9px; color: #aaa; font-weight: 400; }
+  .di-list-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-top: 3px; }
+  .di-list { list-style: none; }
+  .di-list li { font-size: 8.5px; color: #666; padding: 1px 0; display: flex; align-items: flex-start; gap: 3px; }
+  .di-list li::before { content: '·'; color: #1F69FF; flex-shrink: 0; }
+  .di-conf-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; color: #aaa; margin-top: 4px; margin-bottom: 2px; }
+  .di-conf-track { height: 3px; background: #eee; border-radius: 2px; overflow: hidden; }
+  .di-conf-fill { height: 100%; background: #1F69FF; border-radius: 2px; }
+  .di-trace { background: #fff; border: 1px solid #e8e8e8; border-radius: 4px; padding: 5px 8px; flex-shrink: 0; }
+  .di-trace-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 2px; }
+  .di-trace-txt { font-size: 8.5px; color: #888; line-height: 1.5; }
+  .di-bottom { padding: 6px 10px; background: #fff; border-top: 1px solid #e8e8e8; display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; }
+  .di-share { background: #1F69FF; color: #fff; border: none; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; cursor: pointer; }
+
+  /* ── Dashboards & BI UI (dbi-) ── */
+  .dbi-wrap { position: absolute; inset: 0; background: #F8F9FA; display: flex; flex-direction: column; font-family: -apple-system,"Segoe UI",sans-serif; }
+  .dbi-topbar { height: 34px; background: #fff; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+  .dbi-logo { font-family: 'Fraunces', serif; font-style: italic; color: #1F69FF; font-size: 12px; font-variation-settings: "opsz" 144, "WONK" 1; }
+  .dbi-sep { color: #ddd; }
+  .dbi-bc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #aaa; letter-spacing: 0.1em; text-transform: uppercase; }
+  .dbi-body { display: flex; flex: 1; overflow: hidden; }
+  .dbi-rail { width: 52px; background: #fff; border-right: 1px solid #e8e8e8; padding: 8px 0; flex-shrink: 0; }
+  .dbi-rail-item { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #aaa; }
+  .dbi-rail-item.active { color: #1F69FF; background: rgba(31,105,255,0.06); border-left: 2px solid #1F69FF; }
+  .dbi-main { flex: 1; display: flex; flex-direction: column; padding: 6px 8px; overflow: hidden; }
+  .dbi-query-wrap { background: #fff; border: 1px solid #e8e8e8; border-radius: 5px; padding: 4px 8px; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; flex-shrink: 0; }
+  .dbi-qicon { color: #1F69FF; font-size: 10px; }
+  .dbi-qtext { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #0A1830; flex: 1; min-height: 12px; }
+  .dbi-cursor { display: inline-block; width: 1px; height: 10px; background: #1F69FF; animation: es-blink 1s step-end infinite; vertical-align: middle; }
+  .dbi-chart-types { display: flex; gap: 4px; margin-bottom: 6px; flex-shrink: 0; }
+  .dbi-ctype { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: #eee; color: #888; transition: background 0.2s, color 0.2s; }
+  .dbi-ctype.on { background: rgba(31,105,255,0.12); color: #1F69FF; }
+  .dbi-chart-row { flex: 1; display: flex; gap: 8px; overflow: hidden; }
+  .dbi-bars { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+  .dbi-bar-row { display: flex; align-items: center; gap: 6px; }
+  .dbi-region { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #888; width: 36px; flex-shrink: 0; text-align: right; }
+  .dbi-track { flex: 1; height: 13px; background: #eee; border-radius: 2px; overflow: hidden; }
+  .dbi-fill { height: 100%; background: #1F69FF; width: 0%; border-radius: 2px; transition: width 0.05s linear; }
+  .dbi-val { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #1F69FF; width: 40px; flex-shrink: 0; }
+  .dbi-drill { width: 76px; flex-shrink: 0; background: #fff; border: 1px solid #e8e8e8; border-radius: 5px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .dbi-drill-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; }
+  .dbi-drill-chip { font-family: 'JetBrains Mono', monospace; font-size: 7px; background: rgba(31,105,255,0.08); color: #1F69FF; border-radius: 3px; padding: 3px 5px; text-align: center; }
+  .dbi-status { padding: 4px 8px; background: #fff; border-top: 1px solid #e8e8e8; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .dbi-sdot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .dbi-stxt { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #bbb; letter-spacing: 0.09em; text-transform: uppercase; }
+
+  /* ── DB Analytics UI (dba-) ── */
+  .dba-wrap { position: absolute; inset: 0; background: #0d1117; display: flex; flex-direction: column; font-family: -apple-system,"Segoe UI",sans-serif; }
+  .dba-topbar { height: 34px; background: #161b22; border-bottom: 1px solid #21262d; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+  .dba-logo { font-family: 'Fraunces', serif; font-style: italic; color: #1F69FF; font-size: 12px; font-variation-settings: "opsz" 144, "WONK" 1; }
+  .dba-sep { color: #30363d; }
+  .dba-bc { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #555; letter-spacing: 0.1em; text-transform: uppercase; }
+  .dba-body { display: flex; flex: 1; overflow: hidden; }
+  .dba-rail { width: 52px; background: #161b22; border-right: 1px solid #21262d; padding: 8px 0; flex-shrink: 0; }
+  .dba-rail-item { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #444; }
+  .dba-rail-item.active { color: #1F69FF; background: rgba(31,105,255,0.1); border-left: 2px solid #1F69FF; }
+  .dba-console-area { flex: 1; display: flex; overflow: hidden; }
+  .dba-console-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .dba-nl-pane { padding: 6px 10px; border-bottom: 1px solid #21262d; flex-shrink: 0; }
+  .dba-pane-lbl { font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; color: #444; margin-bottom: 3px; }
+  .dba-nl-text { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: #cdd9e5; min-height: 14px; }
+  .dba-nl-cursor { display: inline-block; width: 1px; height: 10px; background: #1F69FF; animation: es-blink 1s step-end infinite; vertical-align: middle; }
+  .dba-sql-pane { padding: 6px 10px; flex: 1; border-bottom: 1px solid #21262d; overflow: hidden; }
+  .dba-sql-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1.6; white-space: pre; color: #cdd9e5; }
+  .dba-kw { color: #79c0ff; }
+  .dba-str { color: #B8860B; }
+  .dba-sc { color: #8b949e; }
+  .dba-results-pane { padding: 0 10px; overflow: auto; flex: 1; opacity: 0; transition: opacity 0.4s; }
+  .dba-tbl { width: 100%; border-collapse: collapse; }
+  .dba-tbl th { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #444; padding: 4px 6px; border-bottom: 1px solid #21262d; text-align: left; }
+  .dba-tbl td { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: #8b949e; padding: 3px 6px; border-bottom: 1px solid #161b22; }
+  .dba-opt { width: 96px; flex-shrink: 0; background: #161b22; border-left: 1px solid #21262d; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .dba-opt-icon { font-size: 13px; }
+  .dba-opt-txt { font-size: 8px; color: #666; line-height: 1.55; }
+  .dba-opt-btn { background: #1F69FF; color: #fff; border: none; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; cursor: pointer; align-self: flex-start; margin-top: 3px; }
+  .dba-status { padding: 4px 10px; background: #161b22; border-top: 1px solid #21262d; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .dba-sdot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+  .dba-stxt { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: #444; letter-spacing: 0.09em; text-transform: uppercase; }
+
+  /* Parked screen mini ES UI */
+  .es-parked-mini {
+    position: absolute; inset: 0;
+    background: #F8F9FA;
+    overflow: hidden;
+  }
+  .es-parked-bar {
+    height: 14px; background: #fff; border-bottom: 1px solid #e8e8e8;
+    display: flex; align-items: center; padding: 0 5px; gap: 4px;
+  }
+  .es-parked-dot { width: 3px; height: 3px; border-radius: 50%; background: #1F69FF; }
+  .es-parked-title { font-family: 'JetBrains Mono', monospace; font-size: 5px; color: #bbb; letter-spacing: 0.08em; text-transform: uppercase; }
+  .es-parked-rows { padding: 4px 5px; display: flex; flex-direction: column; gap: 3px; }
+  .es-parked-row { height: 8px; border-radius: 2px; background: #e8e8e8; }
+  .es-parked-row:first-child { background: rgba(31,105,255,0.15); width: 85%; }
+  .es-parked-row:nth-child(2) { width: 70%; }
+  .es-parked-row:nth-child(3) { width: 78%; }
+
+</style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <nav class="nav" id="nav">
+    <div class="nav-logo" id="nav-logo" style="cursor:pointer">Weaved.</div>
+    <div class="nav-links">
+      <a href="#platform" id="nav-platform">Platform</a>
+      <a href="#">Agents</a>
+      <a href="#">Industries</a>
+      <a href="#">Security</a>
+      <a href="#">Company</a>
+    </div>
+    <button class="nav-cta">Book a Demo →</button>
+  </nav>
+
+  <div id="page-home">
+
+  <!-- ============================================ -->
+  <!-- ACT 1 · HERO INTRO                            -->
+  <!-- ============================================ -->
+  <section class="act-intro">
+    <div class="hero-text">
+      <div class="hero-meta">
+        <span>Greychain</span>
+        <span>AI Platform · 2026</span>
+      </div>
+      <h1 class="hero-h1">Where data <em>becomes</em><br>fabric.<br>Where <em>questions</em><br>become <span class="ampersand">&</span><br>answers.</h1>
+      <p class="hero-sub">
+        Weaved is the agentic intelligence operating system for the modern enterprise — <span>woven from your data, deployed in your cloud, governed by your rules.</span>
+      </p>
+      <div class="cta-row">
+        <a href="#" class="cta-primary">Book a Demo →</a>
+        <a href="#platform" id="see-how-weaves" class="cta-secondary">See how it weaves</a>
+      </div>
+    </div>
+
+    <div class="hero-loom">
+      <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+        <line class="warp" x1="20" y1="0" x2="20" y2="500"/>
+        <line class="warp" x1="40" y1="0" x2="40" y2="500"/>
+        <line class="warp" x1="60" y1="0" x2="60" y2="500"/>
+        <line class="warp" x1="80" y1="0" x2="80" y2="500"/>
+        <line class="warp" x1="100" y1="0" x2="100" y2="500"/>
+        <line class="warp" x1="120" y1="0" x2="120" y2="500"/>
+        <line class="warp" x1="140" y1="0" x2="140" y2="500"/>
+        <line class="warp" x1="160" y1="0" x2="160" y2="500"/>
+        <line class="warp" x1="180" y1="0" x2="180" y2="500"/>
+        <line class="warp" x1="200" y1="0" x2="200" y2="500"/>
+        <line class="warp" x1="220" y1="0" x2="220" y2="500"/>
+        <line class="warp" x1="240" y1="0" x2="240" y2="500"/>
+        <line class="warp" x1="260" y1="0" x2="260" y2="500"/>
+        <line class="warp" x1="280" y1="0" x2="280" y2="500"/>
+        <line class="warp" x1="300" y1="0" x2="300" y2="500"/>
+        <line class="warp" x1="320" y1="0" x2="320" y2="500"/>
+        <line class="warp" x1="340" y1="0" x2="340" y2="500"/>
+        <line class="warp" x1="360" y1="0" x2="360" y2="500"/>
+        <line class="warp" x1="380" y1="0" x2="380" y2="500"/>
+
+        <line class="weft-base" x1="0" y1="50" x2="400" y2="50" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="80" x2="400" y2="80" pathLength="100"/>
+        <line class="weft-blue weft-blue-1" x1="0" y1="110" x2="400" y2="110" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="140" x2="400" y2="140" pathLength="100"/>
+        <line class="weft-cream" x1="0" y1="170" x2="400" y2="170" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="200" x2="400" y2="200" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="230" x2="400" y2="230" pathLength="100"/>
+        <line class="weft-blue weft-blue-2" x1="0" y1="260" x2="400" y2="260" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="290" x2="400" y2="290" pathLength="100"/>
+        <line class="weft-cream" x1="0" y1="320" x2="400" y2="320" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="350" x2="400" y2="350" pathLength="100"/>
+        <line class="weft-blue weft-blue-3" x1="0" y1="380" x2="400" y2="380" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="410" x2="400" y2="410" pathLength="100"/>
+        <line class="weft-base" x1="0" y1="440" x2="400" y2="440" pathLength="100"/>
+      </svg>
+      <div class="loom-caption">
+        <span>Fig. 01 — The Weave</span>
+        <span>Snowflake · Salesforce · ServiceNow</span>
+      </div>
+    </div>
+
+    <div class="scroll-cue">Scroll to enter</div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ACT 2 · LAPTOP SEQUENCE (5 viewports of pin) -->
+  <!-- ============================================ -->
+  <section class="act-laptop" id="laptop-act">
+    <div class="laptop-stage">
+
+      <!-- Stage headlines (cycle through) -->
+      <div class="stage-headline" data-stage="threads" id="stage-threads">
+        <div class="stage-eyebrow">Stage 01 — Sources</div>
+        <div class="stage-h2">Your data lives in <em>twelve different places.</em></div>
+      </div>
+
+      <div class="stage-headline" data-stage="converging" id="stage-converging">
+        <div class="stage-eyebrow">Stage 02 — Convergence</div>
+        <div class="stage-h2">Weaved threads them <em>into one.</em></div>
+      </div>
+
+      <div class="stage-headline" data-stage="opening" id="stage-opening">
+        <div class="stage-eyebrow">Stage 03 — Awakening</div>
+        <div class="stage-h2">And the operating system <em>comes alive.</em></div>
+      </div>
+
+      <div class="stage-headline" data-stage="inside" id="stage-inside">
+        <div class="stage-eyebrow">Stage 04 — Inside Weaved</div>
+        <div class="stage-h2">Ask anything. <em>Get answers</em> from everywhere.</div>
+      </div>
+
+      <!-- Source tags floating around the laptop -->
+      <div class="source-tag s1" id="src1">Snowflake</div>
+      <div class="source-tag s2" id="src2">Salesforce</div>
+      <div class="source-tag s3" id="src3">SharePoint</div>
+      <div class="source-tag s4" id="src4">Oracle</div>
+      <div class="source-tag s5" id="src5">ServiceNow</div>
+      <div class="source-tag s6" id="src6">PostgreSQL</div>
+
+      <!-- Threads converging into laptop center -->
+      <div class="converging-threads" id="threads">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <!-- Convergence point is 800,560 (50% x, ~62% y) matching laptop position -->
+          <!-- From left -->
+          <path class="thread-path" d="M0,150 C300,200 500,400 800,560" stroke="#1F69FF"/>
+          <path class="thread-path" d="M0,320 C280,360 520,460 800,560" stroke="#0A1830"/>
+          <path class="thread-path" d="M0,500 C300,510 540,530 800,560" stroke="#C8B89A"/>
+          <path class="thread-path" d="M0,700 C260,660 540,610 800,560" stroke="#0A1830"/>
+          <path class="thread-path" d="M80,880 C320,780 560,660 800,560" stroke="#1F69FF"/>
+          <!-- From right -->
+          <path class="thread-path" d="M1600,140 C1300,210 1060,380 800,560" stroke="#0A1830"/>
+          <path class="thread-path" d="M1600,340 C1340,380 1080,460 800,560" stroke="#1F69FF"/>
+          <path class="thread-path" d="M1600,540 C1320,540 1060,548 800,560" stroke="#C8B89A"/>
+          <path class="thread-path" d="M1600,720 C1320,670 1060,620 800,560" stroke="#0A1830"/>
+          <path class="thread-path" d="M1520,880 C1280,790 1040,670 800,560" stroke="#1F69FF"/>
+        </svg>
+      </div>
+
+      <!-- THE LAPTOP -->
+      <div class="laptop-wrapper" id="laptop">
+        <div class="laptop">
+          <div class="laptop-base"></div>
+          <div class="laptop-screen" id="screen">
+
+            <!-- Back of lid (visible when laptop is closed, faces camera at -95deg rotation) -->
+            <div class="lid-back" id="lid-back">
+              <div class="logo-mark">Weaved</div>
+            </div>
+
+            <!-- Front of screen — real Weaved product UI -->
+            <div class="screen-content" id="screen-content">
+              <div class="w-wrap">
+
+                <!-- Top bar -->
+                <div class="w-topbar">
+                  <div class="w-topbar-left">
+                    <span class="w-logo">Weaved.</span>
+                    <span class="w-bc-sep">›</span>
+                    <span class="w-bc-label">Financial ERP</span>
+                  </div>
+                  <div class="w-topbar-right">
+                    <button class="w-theme-btn" aria-label="Toggle theme">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+                    <div class="w-avatar">SB</div>
+                  </div>
+                </div>
+
+                <!-- Body -->
+                <div class="w-body">
+
+                  <!-- Left rail -->
+                  <nav class="w-rail" aria-label="Navigation">
+                    <div class="w-rail-back">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                      <span>Agent</span>
+                    </div>
+                    <div class="w-rail-items">
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <span>Overview</span>
+                      </div>
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>Documents</span>
+                      </div>
+                      <div class="w-nav-item active">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>Agent</span>
+                      </div>
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>Generator</span>
+                      </div>
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        <span>Automations</span>
+                      </div>
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        <span>Connections</span>
+                      </div>
+                      <div class="w-nav-item">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>Project Team</span>
+                      </div>
+                    </div>
+                    <div class="w-rail-collapse">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+                      <span>Collapse</span>
+                    </div>
+                  </nav>
+
+                  <!-- Chat list -->
+                  <div class="w-chatlist">
+                    <button class="w-new-chat">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      New Chat
+                    </button>
+                    <div class="w-chat-item active">
+                      <svg class="w-chat-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <div class="w-chat-meta">
+                        <div class="w-chat-title">Top 5 clients by market value</div>
+                        <div class="w-chat-time">just now</div>
+                      </div>
+                    </div>
+                    <div class="w-chat-item">
+                      <svg class="w-chat-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <div class="w-chat-meta">
+                        <div class="w-chat-title">Q3 revenue analysis EMEA</div>
+                        <div class="w-chat-time">Shared</div>
+                      </div>
+                    </div>
+                    <div class="w-chat-item">
+                      <svg class="w-chat-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <div class="w-chat-meta">
+                        <div class="w-chat-title">Portfolio risk summary</div>
+                        <div class="w-chat-time">2h ago</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Main area -->
+                  <div class="w-main">
+                    <div class="w-main-toprow">
+                      <div class="w-search-toggle">
+                        <span>Search Documents</span>
+                        <div class="w-toggle-pill"><div class="w-toggle-thumb"></div></div>
+                      </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="w-messages">
+                      <!-- User bubble -->
+                      <div class="w-msg-user-wrap">
+                        <div class="w-msg-bubble">show me the top 5 clients by market value</div>
+                        <div class="w-msg-meta">
+                          <span class="w-msg-you">You</span>
+                          <div class="w-avatar-sm">SB</div>
+                        </div>
+                      </div>
+
+                      <!-- Status -->
+                      <div class="w-status-row">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Queried database, Generated 1 SQL query</span>
+                        <svg class="w-expand" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                      </div>
+
+                      <!-- Results table -->
+                      <div class="w-table-wrap">
+                        <table class="w-table">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Client</th>
+                              <th class="num">Total Market Value</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr><td>1</td><td>Emerald Capital Partners</td><td class="num">$26,870,705</td></tr>
+                            <tr><td>2</td><td>Robert Chen</td><td class="num">$17,496,629</td></tr>
+                            <tr><td>3</td><td>TechVentures LLC</td><td class="num">$9,418,265</td></tr>
+                            <tr><td>4</td><td>Margaret Chen</td><td class="num">$3,526,044</td></tr>
+                            <tr><td>5</td><td>Elena Volkov</td><td class="num">$3,431,768</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- Bar chart -->
+                      <div class="w-chart-wrap">
+                        <div class="w-chart-title">Top 5 Clients by Total Market Value (Q1 2026)</div>
+                        <div class="w-chart">
+                          <div class="w-bar-row">
+                            <span class="w-bar-label">Emerald Capital</span>
+                            <div class="w-bar-track"><div class="w-bar" style="width:100%"></div></div>
+                            <span class="w-bar-val">$26.9M</span>
+                          </div>
+                          <div class="w-bar-row">
+                            <span class="w-bar-label">Robert Chen</span>
+                            <div class="w-bar-track"><div class="w-bar" style="width:65.1%"></div></div>
+                            <span class="w-bar-val">$17.5M</span>
+                          </div>
+                          <div class="w-bar-row">
+                            <span class="w-bar-label">TechVentures LLC</span>
+                            <div class="w-bar-track"><div class="w-bar" style="width:35.1%"></div></div>
+                            <span class="w-bar-val">$9.4M</span>
+                          </div>
+                          <div class="w-bar-row">
+                            <span class="w-bar-label">Margaret Chen</span>
+                            <div class="w-bar-track"><div class="w-bar" style="width:13.1%"></div></div>
+                            <span class="w-bar-val">$3.5M</span>
+                          </div>
+                          <div class="w-bar-row">
+                            <span class="w-bar-label">Elena Volkov</span>
+                            <div class="w-bar-track"><div class="w-bar" style="width:12.8%"></div></div>
+                            <span class="w-bar-val">$3.4M</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div><!-- .w-messages -->
+
+                    <!-- Input bar -->
+                    <div class="w-input-area">
+                      <div class="w-input-pill">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                        <span class="w-input-placeholder">Ask anything... (type @ to mention a document or database)</span>
+                        <div class="w-input-right">
+                          <div class="w-auto-btn">Auto ∧</div>
+                          <button class="w-send-btn" aria-label="Send">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="w-disclaimer">AI can make mistakes. Verify important information.</div>
+                    </div>
+
+                  </div><!-- .w-main -->
+
+                </div><!-- .w-body -->
+              </div><!-- .w-wrap -->
+            </div><!-- .screen-content -->
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ACT 3 · INSIDE — THE 12 AGENTS                -->
+  <!-- ============================================ -->
+  <section class="act-inside">
+    <div class="inside-meta">— The Weaved Suite</div>
+    <h2 class="inside-h2">Twelve specialized agents.<br><em>One unified fabric.</em></h2>
+
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-num">01 / 12</div>
+        <div>
+          <div class="agent-name">Enterprise <em>Search</em></div>
+          <div class="agent-desc">Find any answer across your databases, documents, and applications.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">02 / 12</div>
+        <div>
+          <div class="agent-name"><em>Knowledge</em></div>
+          <div class="agent-desc">Turn scattered enterprise context into one intelligent surface.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">03 / 12</div>
+        <div>
+          <div class="agent-name"><em>Sanitizer</em></div>
+          <div class="agent-desc">Clean, mask, and govern sensitive data before it ever leaves your perimeter.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">04 / 12</div>
+        <div>
+          <div class="agent-name">Decision <em>Intelligence</em></div>
+          <div class="agent-desc">Reasoning agents that turn raw signal into board-ready recommendations.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">05 / 12</div>
+        <div>
+          <div class="agent-name">Dashboards <em>& BI</em></div>
+          <div class="agent-desc">Generate, query, and update dashboards in natural language.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">06 / 12</div>
+        <div>
+          <div class="agent-name">DB <em>Analytics</em></div>
+          <div class="agent-desc">Query any database in plain English. DBAOps included.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">07 / 12</div>
+        <div>
+          <div class="agent-name">Slides <em>& Reports</em></div>
+          <div class="agent-desc">Generate consulting-grade decks and reports from your enterprise data.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">08 / 12</div>
+        <div>
+          <div class="agent-name">Internal <em>Audit</em></div>
+          <div class="agent-desc">Continuous controls testing and audit trail generation across systems.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">09 / 12</div>
+        <div>
+          <div class="agent-name">Financial <em>Analysis</em></div>
+          <div class="agent-desc">From close to forecast, agents that understand finance.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">10 / 12</div>
+        <div>
+          <div class="agent-name">Automation <em>Workflows</em></div>
+          <div class="agent-desc">Orchestrate multi-step processes across every connected app.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">11 / 12</div>
+        <div>
+          <div class="agent-name">Marketing <em>& Creative</em></div>
+          <div class="agent-desc">On-brand creative, performance copy, and campaign reasoning.</div>
+        </div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-num">12 / 12</div>
+        <div>
+          <div class="agent-name">Pre-<em>Sales</em></div>
+          <div class="agent-desc">Accelerate RFPs, technical scoping, and discovery with deep-context agents.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ACT 4 · DEPLOYMENT                            -->
+  <!-- ============================================ -->
+  <section class="act-deploy">
+    <div class="inside-meta">— Rapid Deployment</div>
+    <h2 class="inside-h2">From signature<br>to <em>production</em><br>in three weeks.</h2>
+
+    <div class="deploy-grid">
+      <div class="deploy-card">
+        <div class="deploy-card-label">SaaS · Dedicated Tenant</div>
+        <div class="deploy-num">3<span class="deploy-num-unit">wks</span></div>
+        <div class="deploy-desc">Discovery, install, customize, and go live — all inside your environment.</div>
+        <div class="deploy-stages">
+          <span>Discover</span>
+          <span>Install</span>
+          <span>Customize</span>
+          <span>Live</span>
+        </div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-card-label">PaaS · Platform-as-a-Service</div>
+        <div class="deploy-num">6<span class="deploy-num-unit">wks</span></div>
+        <div class="deploy-desc">For teams that need deeper integration, custom agents, and bring-your-own-LLM.</div>
+        <div class="deploy-stages">
+          <span>Discover</span>
+          <span>Install</span>
+          <span>Customize</span>
+          <span>Live</span>
+        </div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-card-label">Custom · Bespoke Build</div>
+        <div class="deploy-num">8<span class="deploy-num-unit">–12 wks</span></div>
+        <div class="deploy-desc">Forward-deployed engineers building purpose-fit agents for your enterprise.</div>
+        <div class="deploy-stages">
+          <span>Discover</span>
+          <span>Install</span>
+          <span>Customize</span>
+          <span>Live</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ACT 5 · CTA OUTRO                             -->
+  <!-- ============================================ -->
+  <section class="act-cta">
+    <div class="cta-eyebrow">Ready to see Weaved?</div>
+    <h2 class="cta-h2">See your enterprise<br><em>weave together.</em></h2>
+    <div class="cta-row-bottom">
+      <a href="#" class="cta-final-primary">Book a Demo →</a>
+      <a href="#" class="cta-final-secondary">Talk to Sales</a>
+    </div>
+  </section>
+
+  </div><!-- /page-home -->
+
+  <!-- ============================================ -->
+  <!-- PLATFORM PAGE                                  -->
+  <!-- ============================================ -->
+  <div id="page-platform" style="display:none">
+
+    <!-- Platform hero -->
+    <section class="plat-transition">
+      <div class="plat-eyebrow">The Platform</div>
+      <h2 class="plat-h1">Twelve agents.<br>One fabric.<br><em>Watch them weave.</em></h2>
+    </section>
+
+    <!-- ================================================ -->
+    <!-- FEATURE 01 · ENTERPRISE SEARCH                    -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-01-section">
+      <div class="feat-sticky" id="feat-01-sticky">
+
+        <!-- Thread SVG: left edge → laptop on right -->
+        <svg class="feat-thread" id="feat-01-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M0,180 C280,210 540,340 960,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M0,300 C260,330 510,390 960,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M0,420 C270,435 530,448 960,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M0,540 C280,520 540,490 960,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.35"/>
+          <path class="feat-thread-path" d="M0,660 C300,610 570,530 960,450" stroke="#0A1830" stroke-width="1.2" opacity="0.25"/>
+        </svg>
+
+        <!-- Copy — left side -->
+        <div class="feat-copy" id="feat-01-copy">
+          <div class="feat-eyebrow">01 / Enterprise Search</div>
+          <h2 class="feat-headline">Find any answer.<br><em>Across everything.</em></h2>
+          <p class="feat-body">One query surfaces answers from databases, SharePoint, Slack, CRMs, ERPs, and every file system your enterprise touches. No tab-switching. No asking IT.</p>
+          <ul class="feat-proof">
+            <li>Natural-language SQL across any database</li>
+            <li>Unified semantic search over documents</li>
+            <li>Results cited, traced, and auditable</li>
+          </ul>
+          <a href="#" class="feat-cta">See Enterprise Search →</a>
+        </div>
+
+        <!-- MacBook — right side -->
+        <div class="feat-mac-wrap" id="feat-01-mac">
+          <div class="feat-laptop-wrapper" id="feat-01-wrapper">
+            <div class="feat-lid" id="feat-01-lid">
+              <!-- lid back (silver, seen when closed) -->
+              <div class="feat-lid-back" id="feat-01-lid-back">
+                <div class="feat-logo-mark">✦</div>
+              </div>
+              <!-- screen face (seen when open) -->
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-01-screen">
+
+                  <!-- Enterprise Search UI -->
+                  <div class="es-wrap">
+                    <div class="es-topbar">
+                      <span class="es-logo">Weaved.</span>
+                      <span class="es-topbar-sep">›</span>
+                      <span class="es-topbar-title">Enterprise Search</span>
+                    </div>
+                    <div class="es-body">
+                      <nav class="es-sidebar">
+                        <div class="es-sidebar-item active"><span class="es-sidebar-icon">⌕</span>Search</div>
+                        <div class="es-sidebar-item"><span class="es-sidebar-icon">◈</span>Agents</div>
+                        <div class="es-sidebar-item"><span class="es-sidebar-icon">◎</span>Analytics</div>
+                        <div class="es-sidebar-item"><span class="es-sidebar-icon">△</span>Audit</div>
+                        <div class="es-sidebar-item"><span class="es-sidebar-icon">⚙</span>Settings</div>
+                      </nav>
+                      <div class="es-main">
+                        <div class="es-search-bar-wrap">
+                          <div class="es-search-bar">
+                            <span class="es-search-icon">⌕</span>
+                            <span class="es-search-text">revenue reports Q4 2024<span class="es-search-cursor"></span></span>
+                          </div>
+                          <div class="es-filter-row">
+                            <span class="es-filter active">All Sources</span>
+                            <span class="es-filter">Database</span>
+                            <span class="es-filter">Docs</span>
+                            <span class="es-filter">Email</span>
+                            <span class="es-filter">CRM</span>
+                          </div>
+                        </div>
+                        <div class="es-results">
+                          <div class="es-result-card">
+                            <div class="es-result-header">
+                              <span class="es-result-source">Snowflake DB</span>
+                              <span class="es-result-title">Q4_2024_Revenue_Summary</span>
+                            </div>
+                            <div class="es-result-excerpt">Total revenue <span class="es-result-highlight">$48.7M</span> across 3 business units. YoY growth 23%. Enterprise segment led with $31.2M...</div>
+                            <div class="es-result-meta">
+                              <span class="es-result-meta-item">finance_db.reporting.q4</span>
+                              <span class="es-result-meta-item">Updated 2h ago</span>
+                            </div>
+                          </div>
+                          <div class="es-result-card">
+                            <div class="es-result-header">
+                              <span class="es-result-source doc">SharePoint</span>
+                              <span class="es-result-title">Q4 Board Presentation.pptx</span>
+                            </div>
+                            <div class="es-result-excerpt">Slide 7: <span class="es-result-highlight">Revenue breakdown Q4 2024</span> — see appendix for regional split and deal size distribution...</div>
+                            <div class="es-result-meta">
+                              <span class="es-result-meta-item">Finance › Board Decks</span>
+                              <span class="es-result-meta-item">Dec 15, 2024</span>
+                            </div>
+                          </div>
+                          <div class="es-result-card">
+                            <div class="es-result-header">
+                              <span class="es-result-source sql">Salesforce</span>
+                              <span class="es-result-title">Closed Won Opportunities</span>
+                            </div>
+                            <div class="es-result-excerpt">847 closed-won deals in <span class="es-result-highlight">Q4 2024</span>. Avg deal size $57.5K. Top rep: Sarah Chen ($4.2M). Enterprise: 62% of total...</div>
+                            <div class="es-result-meta">
+                              <span class="es-result-meta-item">CRM · Opportunities</span>
+                              <span class="es-result-meta-item">Live sync</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="es-status-bar">
+                          <span class="es-status-dot"></span>
+                          <span class="es-status-text">Connected · 14 sources · 0ms latency</span>
+                          <span class="es-result-count">3 of 47 results</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div><!-- .feat-screen-content -->
+              </div><!-- .feat-screen -->
+            </div><!-- .feat-lid -->
+            <div class="feat-base"></div>
+            <div class="feat-foot"></div>
+          </div><!-- .feat-laptop-wrapper -->
+        </div><!-- .feat-mac-wrap -->
+
+      </div><!-- .feat-sticky -->
+    </section><!-- feat-01 -->
+
+    <!-- ================================================ -->
+    <!-- FEATURE 02 · SANITIZER                            -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-02-section">
+      <div class="feat-sticky" id="feat-02-sticky">
+
+        <!-- Parked Feature 01 MacBook — top right corner -->
+        <div class="feat-parked-wrap" id="feat-01-parked">
+          <div class="feat-parked-shell">
+            <div class="feat-parked-screen">
+              <div class="es-parked-mini">
+                <div class="es-parked-bar">
+                  <span class="es-parked-dot"></span>
+                  <span class="es-parked-title">Enterprise Search</span>
+                </div>
+                <div class="es-parked-rows">
+                  <div class="es-parked-row"></div>
+                  <div class="es-parked-row"></div>
+                  <div class="es-parked-row"></div>
+                  <div class="es-parked-row" style="width:55%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feat-parked-base"></div>
+          <div class="feat-parked-foot"></div>
+          <div class="feat-parked-label">01 · Enterprise Search</div>
+        </div>
+
+        <!-- Thread SVG: from upper-right (parked mac) → laptop on left -->
+        <svg class="feat-thread" id="feat-02-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M1440,120 C1160,190 880,310 480,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M1440,220 C1140,270 850,370 480,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M1440,340 C1160,360 860,410 480,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M1440,460 C1160,455 870,455 480,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.3"/>
+          <path class="feat-thread-path" d="M1440,580 C1150,540 860,500 480,450" stroke="#0A1830" stroke-width="1.2" opacity="0.22"/>
+        </svg>
+
+        <!-- MacBook — left side -->
+        <div class="feat-mac-wrap feat-mac-left" id="feat-02-mac">
+          <div class="feat-laptop-wrapper" id="feat-02-wrapper">
+            <div class="feat-lid" id="feat-02-lid">
+              <div class="feat-lid-back" id="feat-02-lid-back">
+                <div class="feat-logo-mark">✦</div>
+              </div>
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-02-screen">
+
+                  <!-- Sanitizer UI -->
+                  <div class="san-wrap">
+                    <div class="san-topbar">
+                      <span class="san-logo">Weaved.</span>
+                      <span class="san-title">Sanitizer Agent</span>
+                    </div>
+                    <div class="san-tabs">
+                      <span class="san-tab active">Live Pipeline</span>
+                      <span class="san-tab">Rules</span>
+                      <span class="san-tab">Audit Log</span>
+                    </div>
+                    <div class="san-body">
+                      <div class="san-panel">
+                        <div class="san-panel-label raw">↑ Raw Input</div>
+                        <div class="san-text">
+                          Customer: <span class="san-pii">James Morrison</span><br>
+                          Email: <span class="san-pii">j.morrison@acme.com</span><br>
+                          SSN: <span class="san-pii">487-92-3015</span><br>
+                          Revenue: <span class="san-pii">$4,200,000</span><br>
+                          Contract: <span class="san-pii">MSA-2024-0847</span><br><br>
+                          The client <span class="san-pii">James Morrison</span> from ACME Corp signed a renewal for <span class="san-pii">$4.2M</span> in Q4. POC is <span class="san-pii">Sarah Chen</span> at <span class="san-pii">sarah@acme.com</span>.
+                        </div>
+                      </div>
+                      <div class="san-divider"></div>
+                      <div class="san-panel">
+                        <div class="san-panel-label clean">✓ Sanitized Output</div>
+                        <div class="san-text">
+                          Customer: <span class="san-mask">[PERSON_01]</span><br>
+                          Email: <span class="san-mask">[EMAIL_01]</span><br>
+                          SSN: <span class="san-mask">[SSN_REDACTED]</span><br>
+                          Revenue: <span class="san-mask">[REVENUE_01]</span><br>
+                          Contract: <span class="san-mask">[CONTRACT_ID]</span><br><br>
+                          The client <span class="san-mask">[PERSON_01]</span> from ACME Corp signed a renewal for <span class="san-mask">[REVENUE_01]</span> in Q4. POC is <span class="san-mask">[PERSON_02]</span> at <span class="san-mask">[EMAIL_02]</span>.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="san-stats-row">
+                      <div class="san-stat">
+                        <span class="san-stat-num">9</span>
+                        <span class="san-stat-label">Entities Masked</span>
+                      </div>
+                      <div class="san-stat">
+                        <span class="san-stat-num">4</span>
+                        <span class="san-stat-label">PII Types</span>
+                      </div>
+                      <div class="san-stat">
+                        <span class="san-stat-num">0</span>
+                        <span class="san-stat-label">Leaks Allowed</span>
+                      </div>
+                      <div class="san-stat">
+                        <span class="san-stat-num">100%</span>
+                        <span class="san-stat-label">Audit Trail</span>
+                      </div>
+                    </div>
+                    <div class="san-audit-row">
+                      <span class="san-audit-dot"></span>
+                      <span class="san-audit-text">Pipeline active · 2,847 docs processed today · SOC 2 Type II compliant</span>
+                    </div>
+                  </div>
+
+                </div><!-- .feat-screen-content -->
+              </div><!-- .feat-screen -->
+            </div><!-- .feat-lid -->
+            <div class="feat-base"></div>
+            <div class="feat-foot"></div>
+          </div><!-- .feat-laptop-wrapper -->
+        </div><!-- .feat-mac-wrap -->
+
+        <!-- Copy — right side -->
+        <div class="feat-copy feat-copy-right" id="feat-02-copy">
+          <div class="feat-eyebrow">02 / Sanitizer</div>
+          <h2 class="feat-headline">Data governed<br><em>before it moves.</em></h2>
+          <p class="feat-body">Sensitive information — PII, financials, IP — is detected, masked, and logged before any LLM ever sees it. Your compliance team will love you.</p>
+          <ul class="feat-proof">
+            <li>PII detection across 40+ entity types</li>
+            <li>Reversible tokenization for downstream use</li>
+            <li>Full audit trail for every transformation</li>
+          </ul>
+          <a href="#" class="feat-cta">See Sanitizer →</a>
+        </div>
+
+      </div><!-- .feat-sticky -->
+    </section><!-- feat-02 -->
+
+    <!-- ================================================ -->
+    <!-- FEATURE 03 · KNOWLEDGE                          -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-03-section">
+      <div class="feat-sticky" id="feat-03-sticky">
+
+        <!-- Parked stack: F01 + F02 -->
+        <div class="feat-parked-stack" id="feat-03-stack">
+          <div class="feat-parked-unit">
+            <div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div>
+            <div class="feat-parked-unit-base"></div>
+            <div class="feat-parked-unit-label">01 / Enterprise Search</div>
+          </div>
+          <div class="feat-parked-unit">
+            <div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div>
+            <div class="feat-parked-unit-base"></div>
+            <div class="feat-parked-unit-label">02 / Sanitizer</div>
+          </div>
+        </div>
+
+        <!-- Thread: left edge → right Mac (~960,450) -->
+        <svg class="feat-thread" id="feat-03-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M0,190 C280,220 550,355 960,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M0,310 C265,340 515,395 960,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M0,430 C270,442 535,450 960,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M0,550 C280,528 548,494 960,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.3"/>
+          <path class="feat-thread-path" d="M0,670 C298,628 568,536 960,450" stroke="#0A1830" stroke-width="1.2" opacity="0.22"/>
+        </svg>
+
+        <!-- Source labels -->
+        <div class="feat-source-labels" id="feat-03-labels">
+          <span class="feat-src-label" style="top:33%;left:8%">Confluence</span>
+          <span class="feat-src-label" style="top:38%;left:20%">Notion</span>
+          <span class="feat-src-label" style="top:43%;left:32%">Wiki</span>
+          <span class="feat-src-label" style="top:46%;left:44%">Email Archive</span>
+          <span class="feat-src-label" style="top:48%;left:56%">Slack Threads</span>
+        </div>
+
+        <!-- Copy — left -->
+        <div class="feat-copy" id="feat-03-copy">
+          <div class="feat-eyebrow">Feature 03 / 12</div>
+          <h2 class="feat-headline"><em>Knowledge</em></h2>
+          <p class="feat-body">Turn scattered enterprise context into one intelligent surface — a living knowledge graph that reasons across every source.</p>
+          <ul class="feat-proof">
+            <li>Unified graph across docs, people &amp; concepts</li>
+            <li>Semantic reasoning over all connected sources</li>
+            <li>Cited, traceable answers in plain language</li>
+          </ul>
+          <a href="#" class="feat-cta">See Knowledge →</a>
+        </div>
+
+        <!-- MacBook — right -->
+        <div class="feat-mac-wrap" id="feat-03-mac">
+          <div class="feat-laptop-wrapper" id="feat-03-wrapper">
+            <div class="feat-lid" id="feat-03-lid">
+              <div class="feat-lid-back" id="feat-03-lid-back"><div class="feat-logo-mark">✦</div></div>
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-03-screen">
+                  <div class="kg-wrap">
+                    <div class="kg-topbar">
+                      <span class="kg-logo">Weaved.</span><span class="kg-sep">›</span><span class="kg-bc">Knowledge</span>
+                    </div>
+                    <div class="kg-body">
+                      <nav class="kg-rail">
+                        <div class="kg-rail-item">⌕</div>
+                        <div class="kg-rail-item active">◈</div>
+                        <div class="kg-rail-item">◎</div>
+                        <div class="kg-rail-item">△</div>
+                        <div class="kg-rail-item">⚙</div>
+                      </nav>
+                      <div class="kg-main">
+                        <div class="kg-query-wrap">
+                          <span class="kg-query-icon">⌕</span>
+                          <span class="kg-query-text" id="kg-query-text"><span class="kg-cursor"></span></span>
+                        </div>
+                        <div class="kg-graph-area" id="kg-graph">
+                          <svg viewBox="0 0 460 175" width="100%" height="100%">
+                            <!-- Non-highlight edges -->
+                            <line class="kg-edge" x1="40" y1="30" x2="165" y2="25"/>
+                            <line class="kg-edge" x1="40" y1="30" x2="100" y2="90"/>
+                            <line class="kg-edge" x1="165" y1="25" x2="220" y2="88"/>
+                            <line class="kg-edge" x1="290" y1="32" x2="400" y2="42"/>
+                            <line class="kg-edge" x1="290" y1="32" x2="340" y2="92"/>
+                            <line class="kg-edge" x1="400" y1="42" x2="340" y2="92"/>
+                            <line class="kg-edge" x1="55" y1="148" x2="100" y2="90"/>
+                            <line class="kg-edge" x1="350" y1="152" x2="340" y2="92"/>
+                            <line class="kg-edge" x1="220" y1="88" x2="190" y2="152"/>
+                            <line class="kg-edge" x1="340" y1="92" x2="380" y2="152"/>
+                            <!-- Highlight edges -->
+                            <line class="kg-edge-hl" x1="165" y1="25" x2="100" y2="90"/>
+                            <line class="kg-edge-hl" x1="100" y1="90" x2="220" y2="88"/>
+                            <line class="kg-edge-hl" x1="220" y1="88" x2="340" y2="92"/>
+                            <line class="kg-edge-hl" x1="340" y1="92" x2="190" y2="152"/>
+                            <!-- Nodes -->
+                            <rect x="20" y="22" width="40" height="16" rx="2" class="kg-node-doc"/><text x="40" y="47" class="kg-label">Q3 Strategy</text>
+                            <circle cx="165" cy="25" r="12" class="kg-node-person hl"/><text x="165" y="25" class="kg-init hl">PR</text><text x="165" y="46" class="kg-label hl">Priya R.</text>
+                            <polygon points="290,18 304,32 290,46 276,32" class="kg-node-concept"/><text x="290" y="58" class="kg-label">Market Exp.</text>
+                            <rect x="376" y="34" width="48" height="16" rx="2" class="kg-node-doc"/><text x="400" y="59" class="kg-label">Risk Framewk</text>
+                            <rect x="76" y="82" width="48" height="16" rx="2" class="kg-node-doc hl"/><text x="100" y="107" class="kg-label hl">Mkt Playbook</text>
+                            <polygon points="220,80 234,88 220,96 206,88" class="kg-node-concept hl"/><text x="220" y="108" class="kg-label hl">EMEA Region</text>
+                            <polygon points="340,84 354,92 340,100 326,92" class="kg-node-concept hl"/><text x="340" y="112" class="kg-label hl">Q3 Pipeline</text>
+                            <circle cx="55" cy="148" r="11" class="kg-node-person"/><text x="55" y="148" class="kg-init">AK</text><text x="55" y="168" class="kg-label">Alex K.</text>
+                            <rect x="164" y="144" width="52" height="16" rx="2" class="kg-node-doc hl"/><text x="190" y="169" class="kg-label hl">Emerald Cap.</text>
+                            <rect x="355" y="144" width="48" height="16" rx="2" class="kg-node-doc"/><text x="379" y="169" class="kg-label">Volkov Grp.</text>
+                          </svg>
+                        </div>
+                        <div class="kg-answer" id="kg-answer">
+                          <div class="kg-answer-text">EMEA expansion links to Q3 pipeline through 3 strategic accounts (<span class="kg-chip">Emerald Cap.</span> <span class="kg-chip">Volkov Group</span> <span class="kg-chip">Chen Partners</span>) and the Market Entry Playbook authored by <span class="kg-chip">Priya R.</span></div>
+                        </div>
+                        <div class="kg-status">
+                          <span class="kg-dot"></span>
+                          <span class="kg-stat">Synthesized from 14 nodes · 287ms</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-base"></div><div class="feat-foot"></div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- feat-03 -->
+
+    <!-- ================================================ -->
+    <!-- FEATURE 04 · DECISION INTELLIGENCE              -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-04-section">
+      <div class="feat-sticky" id="feat-04-sticky">
+
+        <!-- Parked stack: F01 + F02 + F03 -->
+        <div class="feat-parked-stack" id="feat-04-stack">
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
+        </div>
+
+        <!-- Thread: right edge → left Mac (~480,450) -->
+        <svg class="feat-thread" id="feat-04-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M1440,145 C1158,208 875,318 480,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M1440,245 C1148,282 862,368 480,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M1440,365 C1158,378 858,418 480,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M1440,485 C1158,472 858,462 480,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.3"/>
+          <path class="feat-thread-path" d="M1440,605 C1148,558 858,504 480,450" stroke="#0A1830" stroke-width="1.2" opacity="0.22"/>
+        </svg>
+
+        <!-- Source labels -->
+        <div class="feat-source-labels" id="feat-04-labels">
+          <span class="feat-src-label" style="top:33%;right:8%;left:auto">Financial Models</span>
+          <span class="feat-src-label" style="top:38%;right:20%;left:auto">Market Data</span>
+          <span class="feat-src-label" style="top:43%;right:32%;left:auto">Competitive Intel</span>
+          <span class="feat-src-label" style="top:46%;right:44%;left:auto">Risk Registry</span>
+          <span class="feat-src-label" style="top:48%;right:56%;left:auto">Strategy Docs</span>
+        </div>
+
+        <!-- MacBook — left -->
+        <div class="feat-mac-wrap feat-mac-left" id="feat-04-mac">
+          <div class="feat-laptop-wrapper" id="feat-04-wrapper">
+            <div class="feat-lid" id="feat-04-lid">
+              <div class="feat-lid-back" id="feat-04-lid-back"><div class="feat-logo-mark">✦</div></div>
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-04-screen">
+                  <div class="di-wrap">
+                    <div class="di-topbar">
+                      <span class="di-logo">Weaved.</span><span class="di-sep">›</span><span class="di-bc">Decision Intelligence</span>
+                    </div>
+                    <div class="di-body">
+                      <nav class="di-rail">
+                        <div class="di-rail-item">⌕</div>
+                        <div class="di-rail-item">◈</div>
+                        <div class="di-rail-item active">◉</div>
+                        <div class="di-rail-item">△</div>
+                        <div class="di-rail-item">⚙</div>
+                      </nav>
+                      <div class="di-main">
+                        <div class="di-cards">
+                          <div class="di-card" id="di-card-a">
+                            <div class="di-card-lbl">Scenario A — Accelerate</div>
+                            <div class="di-score">72<span>/100</span></div>
+                            <div class="di-list-lbl">Pros</div>
+                            <ul class="di-list"><li>Fast market entry</li><li>First-mover advantage</li><li>Strong pipeline fit</li></ul>
+                            <div class="di-list-lbl">Risks</div>
+                            <ul class="di-list"><li>High burn rate</li><li>Ops scaling risk</li><li>Competitive response</li></ul>
+                            <div class="di-conf-lbl">Confidence: 72%</div>
+                            <div class="di-conf-track"><div class="di-conf-fill" style="width:72%"></div></div>
+                          </div>
+                          <div class="di-card" id="di-card-b">
+                            <div class="di-card-lbl">Scenario B — Hold Position</div>
+                            <div class="di-score">58<span>/100</span></div>
+                            <div class="di-list-lbl">Pros</div>
+                            <ul class="di-list"><li>Capital efficiency</li><li>Lower risk profile</li><li>Retention focus</li></ul>
+                            <div class="di-list-lbl">Risks</div>
+                            <ul class="di-list"><li>Market share loss</li><li>Team morale dip</li><li>Stalled momentum</li></ul>
+                            <div class="di-conf-lbl">Confidence: 58%</div>
+                            <div class="di-conf-track"><div class="di-conf-fill" style="width:58%"></div></div>
+                          </div>
+                          <div class="di-card rec" id="di-card-c">
+                            <div class="di-rec-pill" id="di-rec-pill">Recommended</div>
+                            <div class="di-card-lbl">Scenario C — Partnership</div>
+                            <div class="di-score">84<span>/100</span></div>
+                            <div class="di-list-lbl">Pros</div>
+                            <ul class="di-list"><li>34% faster time-to-value</li><li>Shared GTM costs</li><li>Proven playbook</li></ul>
+                            <div class="di-list-lbl">Risks</div>
+                            <ul class="di-list"><li>Partner dependency</li><li>IP considerations</li><li>Negotiation time</li></ul>
+                            <div class="di-conf-lbl">Confidence: 84%</div>
+                            <div class="di-conf-track"><div class="di-conf-fill" style="width:84%"></div></div>
+                          </div>
+                        </div>
+                        <div class="di-trace">
+                          <div class="di-trace-lbl">Reasoning Trace</div>
+                          <div class="di-trace-txt">Based on 2024 market entry data, similar-stage partnerships at Bain and Deloitte showed 34% faster time-to-value with lower capital exposure.</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="di-bottom"><button class="di-share">Share with Board →</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-base"></div><div class="feat-foot"></div>
+          </div>
+        </div>
+
+        <!-- Copy — right -->
+        <div class="feat-copy feat-copy-right" id="feat-04-copy">
+          <div class="feat-eyebrow">Feature 04 / 12</div>
+          <h2 class="feat-headline">Decision <em>Intelligence</em></h2>
+          <p class="feat-body">From scattered signal to board-ready recommendation — evaluate scenarios, stress-test assumptions, and ship decisions with confidence.</p>
+          <ul class="feat-proof">
+            <li>3-scenario comparison with scored recommendations</li>
+            <li>Reasoning traces from live enterprise data</li>
+            <li>Board-ready output in one click</li>
+          </ul>
+          <a href="#" class="feat-cta">See Decision Intelligence →</a>
+        </div>
+
+      </div>
+    </section><!-- feat-04 -->
+
+    <!-- ================================================ -->
+    <!-- FEATURE 05 · DASHBOARDS & BI                    -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-05-section">
+      <div class="feat-sticky" id="feat-05-sticky">
+
+        <!-- Parked stack: F01–F04 -->
+        <div class="feat-parked-stack" id="feat-05-stack">
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:75%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">04 / Decision Intel.</div></div>
+        </div>
+
+        <!-- Thread: left edge → right Mac (~960,450) -->
+        <svg class="feat-thread" id="feat-05-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M0,165 C272,198 528,332 960,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M0,285 C262,318 512,388 960,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M0,405 C268,420 538,442 960,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M0,525 C278,508 545,486 960,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.3"/>
+          <path class="feat-thread-path" d="M0,645 C292,608 562,532 960,450" stroke="#0A1830" stroke-width="1.2" opacity="0.22"/>
+        </svg>
+
+        <!-- Source labels -->
+        <div class="feat-source-labels" id="feat-05-labels">
+          <span class="feat-src-label" style="top:32%;left:8%">Snowflake</span>
+          <span class="feat-src-label" style="top:37%;left:20%">BigQuery</span>
+          <span class="feat-src-label" style="top:42%;left:32%">Fabric</span>
+          <span class="feat-src-label" style="top:45%;left:44%">Tableau</span>
+          <span class="feat-src-label" style="top:48%;left:56%">Power BI</span>
+        </div>
+
+        <!-- Copy — left -->
+        <div class="feat-copy" id="feat-05-copy">
+          <div class="feat-eyebrow">Feature 05 / 12</div>
+          <h2 class="feat-headline">Dashboards <em>&amp; BI</em></h2>
+          <p class="feat-body">Generate, query, and update dashboards in natural language — every number traced back to its source, in real time.</p>
+          <ul class="feat-proof">
+            <li>NL query → live chart in seconds</li>
+            <li>Connected to Snowflake, BigQuery, Fabric &amp; more</li>
+            <li>Every metric cited to its source row</li>
+          </ul>
+          <a href="#" class="feat-cta">See Dashboards →</a>
+        </div>
+
+        <!-- MacBook — right -->
+        <div class="feat-mac-wrap" id="feat-05-mac">
+          <div class="feat-laptop-wrapper" id="feat-05-wrapper">
+            <div class="feat-lid" id="feat-05-lid">
+              <div class="feat-lid-back" id="feat-05-lid-back"><div class="feat-logo-mark">✦</div></div>
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-05-screen">
+                  <div class="dbi-wrap">
+                    <div class="dbi-topbar">
+                      <span class="dbi-logo">Weaved.</span><span class="dbi-sep">›</span><span class="dbi-bc">Dashboards</span>
+                    </div>
+                    <div class="dbi-body">
+                      <nav class="dbi-rail">
+                        <div class="dbi-rail-item">⌕</div>
+                        <div class="dbi-rail-item">◈</div>
+                        <div class="dbi-rail-item">◎</div>
+                        <div class="dbi-rail-item active">▦</div>
+                        <div class="dbi-rail-item">⚙</div>
+                      </nav>
+                      <div class="dbi-main">
+                        <div class="dbi-query-wrap">
+                          <span class="dbi-qicon">⌕</span>
+                          <span class="dbi-qtext" id="dbi-query-text"><span class="dbi-cursor"></span></span>
+                        </div>
+                        <div class="dbi-chart-types">
+                          <span class="dbi-ctype on" id="dbi-ct-bar">Bar</span>
+                          <span class="dbi-ctype" id="dbi-ct-line">Line</span>
+                          <span class="dbi-ctype" id="dbi-ct-pie">Pie</span>
+                          <span class="dbi-ctype" id="dbi-ct-area">Area</span>
+                          <span class="dbi-ctype" id="dbi-ct-scatter">Scatter</span>
+                        </div>
+                        <div class="dbi-chart-row">
+                          <div class="dbi-bars">
+                            <div class="dbi-bar-row"><span class="dbi-region">NA</span><div class="dbi-track"><div class="dbi-fill" id="dbi-bar-na"></div></div><span class="dbi-val">$42.3M</span></div>
+                            <div class="dbi-bar-row"><span class="dbi-region">EMEA</span><div class="dbi-track"><div class="dbi-fill" id="dbi-bar-emea"></div></div><span class="dbi-val">$28.1M</span></div>
+                            <div class="dbi-bar-row"><span class="dbi-region">APAC</span><div class="dbi-track"><div class="dbi-fill" id="dbi-bar-apac"></div></div><span class="dbi-val">$19.7M</span></div>
+                            <div class="dbi-bar-row"><span class="dbi-region">LATAM</span><div class="dbi-track"><div class="dbi-fill" id="dbi-bar-latam"></div></div><span class="dbi-val">$8.4M</span></div>
+                          </div>
+                          <div class="dbi-drill">
+                            <div class="dbi-drill-lbl">Drill down</div>
+                            <div class="dbi-drill-chip">By product line</div>
+                            <div class="dbi-drill-chip">By sales rep</div>
+                            <div class="dbi-drill-chip">By time</div>
+                          </div>
+                        </div>
+                        <div class="dbi-status">
+                          <span class="dbi-sdot"></span>
+                          <span class="dbi-stxt">Live data · Snowflake · Last refreshed 2m ago</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-base"></div><div class="feat-foot"></div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- feat-05 -->
+
+    <!-- ================================================ -->
+    <!-- FEATURE 06 · DB ANALYTICS & DBAOPS              -->
+    <!-- ================================================ -->
+    <section class="feat-section" id="feat-06-section">
+      <div class="feat-sticky" id="feat-06-sticky">
+
+        <!-- Parked stack: F01–F05 -->
+        <div class="feat-parked-stack" id="feat-06-stack">
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:70%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">01 / Enterprise Search</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:60%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">02 / Sanitizer</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:80%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">03 / Knowledge</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:75%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">04 / Decision Intel.</div></div>
+          <div class="feat-parked-unit"><div class="feat-parked-unit-shell"><div class="feat-parked-unit-screen"><div class="pu-dot"></div><div class="pu-bar"></div><div class="pu-bar" style="width:65%"></div></div></div><div class="feat-parked-unit-base"></div><div class="feat-parked-unit-label">05 / Dashboards</div></div>
+        </div>
+
+        <!-- Thread: right edge → left Mac (~480,450) -->
+        <svg class="feat-thread" id="feat-06-thread" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+          <path class="feat-thread-path" d="M1440,132 C1155,196 872,308 480,450" stroke="#1F69FF" stroke-width="1.8"/>
+          <path class="feat-thread-path" d="M1440,232 C1145,272 850,368 480,450" stroke="#0A1830" stroke-width="1.4" opacity="0.5"/>
+          <path class="feat-thread-path" d="M1440,352 C1155,368 852,416 480,450" stroke="#C8B89A" stroke-width="1.4"/>
+          <path class="feat-thread-path" d="M1440,472 C1155,462 852,456 480,450" stroke="#1F69FF" stroke-width="1.2" opacity="0.3"/>
+          <path class="feat-thread-path" d="M1440,592 C1148,548 855,498 480,450" stroke="#0A1830" stroke-width="1.2" opacity="0.22"/>
+        </svg>
+
+        <!-- Source labels -->
+        <div class="feat-source-labels" id="feat-06-labels">
+          <span class="feat-src-label" style="top:33%;right:8%;left:auto">MS SQL</span>
+          <span class="feat-src-label" style="top:38%;right:20%;left:auto">PostgreSQL</span>
+          <span class="feat-src-label" style="top:43%;right:32%;left:auto">MySQL</span>
+          <span class="feat-src-label" style="top:46%;right:44%;left:auto">Snowflake</span>
+          <span class="feat-src-label" style="top:48%;right:56%;left:auto">HIVE</span>
+        </div>
+
+        <!-- MacBook — left -->
+        <div class="feat-mac-wrap feat-mac-left" id="feat-06-mac">
+          <div class="feat-laptop-wrapper" id="feat-06-wrapper">
+            <div class="feat-lid" id="feat-06-lid">
+              <div class="feat-lid-back" id="feat-06-lid-back"><div class="feat-logo-mark">✦</div></div>
+              <div class="feat-screen">
+                <div class="feat-screen-content" id="feat-06-screen">
+                  <div class="dba-wrap">
+                    <div class="dba-topbar">
+                      <span class="dba-logo">Weaved.</span><span class="dba-sep">›</span><span class="dba-bc">DB Analytics</span>
+                    </div>
+                    <div class="dba-body">
+                      <nav class="dba-rail">
+                        <div class="dba-rail-item">⌕</div>
+                        <div class="dba-rail-item">◈</div>
+                        <div class="dba-rail-item">◎</div>
+                        <div class="dba-rail-item active">⬡</div>
+                        <div class="dba-rail-item">⚙</div>
+                      </nav>
+                      <div class="dba-console-area">
+                        <div class="dba-console-main">
+                          <div class="dba-nl-pane">
+                            <div class="dba-pane-lbl">Natural Language</div>
+                            <div class="dba-nl-text" id="dba-nl-text"><span class="dba-nl-cursor"></span></div>
+                          </div>
+                          <div class="dba-sql-pane">
+                            <div class="dba-pane-lbl">Generated SQL</div>
+                            <div class="dba-sql-text" id="dba-sql-text"></div>
+                          </div>
+                          <div class="dba-results-pane" id="dba-results">
+                            <table class="dba-tbl">
+                              <thead><tr><th>customer_name</th><th>arr</th><th>last_active</th><th>churn_reason</th></tr></thead>
+                              <tbody>
+                                <tr><td>Meridian Capital</td><td>$2.4M</td><td>2024-09-14</td><td>Budget cut</td></tr>
+                                <tr><td>Apex Dynamics</td><td>$1.8M</td><td>2024-08-29</td><td>Competitor</td></tr>
+                                <tr><td>Volkov &amp; Assoc.</td><td>$1.2M</td><td>2024-10-02</td><td>Product fit</td></tr>
+                                <tr><td>Strata Holdings</td><td>$874K</td><td>2024-09-21</td><td>Budget cut</td></tr>
+                                <tr><td>Chen Partners</td><td>$621K</td><td>2024-10-08</td><td>Acquisition</td></tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="dba-opt">
+                          <div class="dba-opt-icon">💡</div>
+                          <div class="dba-opt-txt">Consider adding an index on customers.last_active — estimated 4.2× speedup.</div>
+                          <button class="dba-opt-btn">Apply</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="dba-status">
+                      <span class="dba-sdot"></span>
+                      <span class="dba-stxt">Executed 340ms · 5 rows · 0.02 credits</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-base"></div><div class="feat-foot"></div>
+          </div>
+        </div>
+
+        <!-- Copy — right -->
+        <div class="feat-copy feat-copy-right" id="feat-06-copy">
+          <div class="feat-eyebrow">Feature 06 / 12</div>
+          <h2 class="feat-headline">DB Analytics &amp; <em>Ops</em></h2>
+          <p class="feat-body">Query any database in plain English. Monitor health, tune performance, and ship schema changes — all through one intelligent console.</p>
+          <ul class="feat-proof">
+            <li>NL → SQL with syntax-highlighted output</li>
+            <li>Real-time optimizer suggestions</li>
+            <li>Works across MS SQL, Postgres, MySQL, Snowflake</li>
+          </ul>
+          <a href="#" class="feat-cta">See DB Analytics →</a>
+        </div>
+
+      </div>
+    </section><!-- feat-06 -->
+
+    <!-- Platform CTA -->
+    <section class="plat-cta-section">
+      <div class="plat-cta-eyebrow">— Ready to see it in action?</div>
+      <h2 class="plat-cta-h2">Twelve agents.<br><em>One platform.</em><br>Your enterprise.</h2>
+      <div class="plat-cta-row">
+        <a href="#" class="plat-cta-primary">Book a Demo →</a>
+        <a href="#" class="plat-cta-secondary">Explore All Agents</a>
+      </div>
+    </section>
+
+  </div><!-- /page-platform -->
+
+  <!-- Progress indicator (only visible during laptop act) -->
+  <div class="scroll-progress" id="progress">
+    <span data-stage="0"></span>
+    <span data-stage="1"></span>
+    <span data-stage="2"></span>
+    <span data-stage="3"></span>
+  </div>
+
+<script>
+  // ============================================
+  // SCROLL CHOREOGRAPHY
+  // ============================================
+
+  const nav        = document.getElementById('nav');
+  const laptopAct  = document.getElementById('laptop-act');
+  const laptopEl   = document.getElementById('laptop');
+  const screen     = document.getElementById('screen');
+  const lidBack    = document.getElementById('lid-back');
+  const screenContent = document.getElementById('screen-content');
+  const threadsEl  = document.getElementById('threads');
+  const progressEl = document.getElementById('progress');
+  const sourceTags = ['src1','src2','src3','src4','src5','src6'].map(id => document.getElementById(id));
+  const threadPaths = Array.from(threadsEl.querySelectorAll('.thread-path'));
+  const stages = {
+    threads:    document.getElementById('stage-threads'),
+    converging: document.getElementById('stage-converging'),
+    opening:    document.getElementById('stage-opening'),
+    inside:     document.getElementById('stage-inside')
+  };
+
+  // Cache SVG path lengths after first paint
+  let pathLengths = null;
+  function initPathLengths() {
+    if (pathLengths) return;
+    pathLengths = threadPaths.map(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      return len;
+    });
+  }
+
+  // Nav transparency
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 80);
+  }, { passive: true });
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const easeOut  = t => 1 - Math.pow(1 - t, 3);
+  const easeInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+
+  function setHeadline(name) {
+    Object.keys(stages).forEach(k =>
+      stages[k].classList.toggle('visible', k === name));
+  }
+  function setDot(idx) {
+    progressEl.querySelectorAll('span').forEach((s, i) =>
+      s.classList.toggle('active', i === idx));
+  }
+
+  function updateScene() {
+    initPathLengths();
+
+    const rect    = laptopAct.getBoundingClientRect();
+    const total   = rect.height - window.innerHeight;
+    const scrolled = -rect.top;
+    const p       = clamp(scrolled / total, 0, 1);
+
+    // Progress indicator visibility
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    progressEl.classList.toggle('visible', inView);
+
+    // ── Laptop scale ────────────────────────────────────────────────────
+    // Stage 1 (0–0.20): tiny, static
+    // Stage 2 (0.20–0.45): scale up gently as threads converge
+    // Stage 3 (0.45–0.65): continue growing as lid opens
+    // Stage 4+ (0.65–1): max size
+    let sp = 0;
+    if (p <= 0.20) {
+      sp = 0;
+    } else if (p <= 0.65) {
+      sp = easeInOut(clamp((p - 0.20) / 0.45, 0, 1));
+    } else {
+      sp = 1;
+    }
+    laptopEl.style.setProperty('--p', sp);
+
+    // ── Source tags: stagger fade-in during stage 1 ───────────────────
+    sourceTags.forEach((t, i) => {
+      const start = 0.04 + i * 0.025;
+      const end   = 0.50;          // fade out as lid opens
+      if (p < start)         t.style.opacity = 0;
+      else if (p < end)      t.style.opacity = clamp((p - start) * 14, 0, 1);
+      else                   t.style.opacity = clamp(1 - (p - end) * 10, 0, 1);
+    });
+
+    // ── Thread draw animation (Stage 2: 0.20 → 0.45) ─────────────────
+    // Each path draws itself sequentially; stagger = 0.04 per path.
+    threadPaths.forEach((path, i) => {
+      const stagger   = i * 0.04;
+      const drawStart = 0.20 + stagger * 0.5;
+      const drawEnd   = 0.40 + stagger * 0.3;
+      const fadeStart = 0.50;
+
+      let opacity = 0;
+      let offset  = pathLengths[i];
+
+      if (p >= drawStart && p < fadeStart) {
+        const t = clamp((p - drawStart) / (drawEnd - drawStart), 0, 1);
+        offset  = pathLengths[i] * (1 - easeOut(t));
+        opacity = clamp((p - drawStart) * 20, 0, 0.75);
+      } else if (p >= fadeStart) {
+        offset  = 0;
+        opacity = clamp(1 - (p - fadeStart) * 8, 0, 0.75);
+      }
+
+      path.style.strokeDashoffset = offset;
+      path.style.opacity          = opacity;
+    });
+
+    // ── Lid open (Stage 3: 0.45 → 0.65) ──────────────────────────────
+    const lid = p > 0.45 ? easeOut(clamp((p - 0.45) / 0.20, 0, 1)) : 0;
+    screen.style.setProperty('--lid', lid);
+    lidBack.style.opacity      = clamp(1 - lid * 4, 0, 1);
+    screenContent.style.opacity = lid > 0.5 ? clamp((lid - 0.5) * 4, 0, 1) : 0;
+
+    // ── Stage headlines ───────────────────────────────────────────────
+    if      (p < 0.18) { setHeadline('threads');    setDot(0); }
+    else if (p < 0.42) { setHeadline('converging'); setDot(1); }
+    else if (p < 0.65) { setHeadline('opening');    setDot(2); }
+    else               { setHeadline('inside');     setDot(3); }
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => { updateScene(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Initial paint (after fonts load for correct path lengths)
+  document.fonts.ready.then(() => updateScene());
+
+  // Reduced-motion: show final state immediately
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.fonts.ready.then(() => {
+      initPathLengths();
+      laptopEl.style.setProperty('--p', 1);
+      screen.style.setProperty('--lid', 1);
+      screenContent.style.opacity = 1;
+      lidBack.style.opacity = 0;
+      setHeadline('inside');
+    });
+  }
+
+  // ============================================
+  // PLATFORM ROUTING
+  // ============================================
+
+  const pageHome      = document.getElementById('page-home');
+  const pagePlatform  = document.getElementById('page-platform');
+  const navLogoEl     = document.getElementById('nav-logo');
+  const navPlatformEl = document.getElementById('nav-platform');
+
+  function navigateTo(page) {
+    if (page === 'platform') {
+      pageHome.style.display = 'none';
+      pagePlatform.style.display = 'block';
+      if (navPlatformEl) navPlatformEl.classList.add('nav-active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.title = 'Weaved — Platform';
+      history.pushState(null, '', '#platform');
+      // initialise platform scroll on first visit
+      document.fonts.ready.then(() => updatePlatformScene());
+    } else {
+      pageHome.style.display = '';
+      pagePlatform.style.display = 'none';
+      if (navPlatformEl) navPlatformEl.classList.remove('nav-active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.title = 'Weaved — The Agentic Intelligence OS';
+      history.pushState(null, '', location.pathname);
+    }
+  }
+
+  if (navLogoEl) {
+    navLogoEl.addEventListener('click', () => navigateTo('home'));
+  }
+  if (navPlatformEl) {
+    navPlatformEl.addEventListener('click', e => {
+      e.preventDefault();
+      navigateTo('platform');
+    });
+  }
+  const seeHowEl = document.getElementById('see-how-weaves');
+  if (seeHowEl) {
+    seeHowEl.addEventListener('click', e => {
+      e.preventDefault();
+      navigateTo('platform');
+    });
+  }
+
+  window.addEventListener('popstate', () => {
+    navigateTo(location.hash === '#platform' ? 'platform' : 'home');
+  });
+
+  // Hash routing on load
+  if (location.hash === '#platform') navigateTo('platform');
+
+  // ============================================
+  // PLATFORM FEATURE SCROLL HANDLERS
+  // ============================================
+
+  const feat01Section  = document.getElementById('feat-01-section');
+  const feat01Thread   = document.getElementById('feat-01-thread');
+  const feat01Wrapper  = document.getElementById('feat-01-wrapper');
+  const feat01Lid      = document.getElementById('feat-01-lid');
+  const feat01LidBack  = document.getElementById('feat-01-lid-back');
+  const feat01Screen   = document.getElementById('feat-01-screen');
+  const feat01Copy     = document.getElementById('feat-01-copy');
+
+  const feat02Section  = document.getElementById('feat-02-section');
+  const feat02Thread   = document.getElementById('feat-02-thread');
+  const feat02Wrapper  = document.getElementById('feat-02-wrapper');
+  const feat02Lid      = document.getElementById('feat-02-lid');
+  const feat02LidBack  = document.getElementById('feat-02-lid-back');
+  const feat02Screen   = document.getElementById('feat-02-screen');
+  const feat02Copy     = document.getElementById('feat-02-copy');
+  const feat01Parked   = document.getElementById('feat-01-parked');
+
+  const feat03Section  = document.getElementById('feat-03-section');
+  const feat03Thread   = document.getElementById('feat-03-thread');
+  const feat03Wrapper  = document.getElementById('feat-03-wrapper');
+  const feat03Lid      = document.getElementById('feat-03-lid');
+  const feat03LidBack  = document.getElementById('feat-03-lid-back');
+  const feat03Screen   = document.getElementById('feat-03-screen');
+  const feat03Copy     = document.getElementById('feat-03-copy');
+
+  const feat04Section  = document.getElementById('feat-04-section');
+  const feat04Thread   = document.getElementById('feat-04-thread');
+  const feat04Wrapper  = document.getElementById('feat-04-wrapper');
+  const feat04Lid      = document.getElementById('feat-04-lid');
+  const feat04LidBack  = document.getElementById('feat-04-lid-back');
+  const feat04Screen   = document.getElementById('feat-04-screen');
+  const feat04Copy     = document.getElementById('feat-04-copy');
+
+  const feat05Section  = document.getElementById('feat-05-section');
+  const feat05Thread   = document.getElementById('feat-05-thread');
+  const feat05Wrapper  = document.getElementById('feat-05-wrapper');
+  const feat05Lid      = document.getElementById('feat-05-lid');
+  const feat05LidBack  = document.getElementById('feat-05-lid-back');
+  const feat05Screen   = document.getElementById('feat-05-screen');
+  const feat05Copy     = document.getElementById('feat-05-copy');
+
+  const feat06Section  = document.getElementById('feat-06-section');
+  const feat06Thread   = document.getElementById('feat-06-thread');
+  const feat06Wrapper  = document.getElementById('feat-06-wrapper');
+  const feat06Lid      = document.getElementById('feat-06-lid');
+  const feat06LidBack  = document.getElementById('feat-06-lid-back');
+  const feat06Screen   = document.getElementById('feat-06-screen');
+  const feat06Copy     = document.getElementById('feat-06-copy');
+
+  let feat01Paths = null;
+  let feat02Paths = null;
+  let feat03Paths = null;
+  let feat04Paths = null;
+  let feat05Paths = null;
+  let feat06Paths = null;
+
+  function initFeatPaths() {
+    if (!feat01Paths && feat01Thread) {
+      feat01Paths = Array.from(feat01Thread.querySelectorAll('.feat-thread-path'));
+      feat01Paths.forEach(p => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+      });
+    }
+    if (!feat02Paths && feat02Thread) {
+      feat02Paths = Array.from(feat02Thread.querySelectorAll('.feat-thread-path'));
+      feat02Paths.forEach(p => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+      });
+    }
+    if (!feat03Paths && feat03Thread) {
+      feat03Paths = Array.from(feat03Thread.querySelectorAll('.feat-thread-path'));
+      feat03Paths.forEach(p => { const len = p.getTotalLength(); p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    }
+    if (!feat04Paths && feat04Thread) {
+      feat04Paths = Array.from(feat04Thread.querySelectorAll('.feat-thread-path'));
+      feat04Paths.forEach(p => { const len = p.getTotalLength(); p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    }
+    if (!feat05Paths && feat05Thread) {
+      feat05Paths = Array.from(feat05Thread.querySelectorAll('.feat-thread-path'));
+      feat05Paths.forEach(p => { const len = p.getTotalLength(); p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    }
+    if (!feat06Paths && feat06Thread) {
+      feat06Paths = Array.from(feat06Thread.querySelectorAll('.feat-thread-path'));
+      feat06Paths.forEach(p => { const len = p.getTotalLength(); p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    }
+  }
+
+  function driveFeatThreads(paths, p) {
+    if (!paths) return;
+    paths.forEach((path, i) => {
+      const stagger   = i * 0.05;
+      const drawStart = stagger * 0.4;
+      const drawEnd   = 0.28 + stagger * 0.14;
+      const fadeStart = 0.55;
+      const totalLen  = parseFloat(path.style.strokeDasharray);
+      let offset  = totalLen;
+      let opacity = 0;
+      if (p >= drawStart && p < fadeStart) {
+        const t = clamp((p - drawStart) / (drawEnd - drawStart), 0, 1);
+        offset  = totalLen * (1 - easeOut(t));
+        opacity = clamp((p - drawStart) * 14, 0, 0.72);
+      } else if (p >= fadeStart) {
+        offset  = 0;
+        opacity = clamp(1 - (p - fadeStart) * 6, 0, 0.72);
+      }
+      path.style.strokeDashoffset = offset;
+      path.style.opacity = opacity;
+    });
+  }
+
+  function driveFeatMac(wrapper, lid, lidBack, screen, p) {
+    if (!wrapper) return;
+    // scale: 0–0.15 tiny, 0.15–0.55 ease in, 0.55+ full
+    const pscale = p <= 0.15 ? 0 : p <= 0.55 ? easeInOut(clamp((p - 0.15) / 0.40, 0, 1)) : 1;
+    wrapper.style.setProperty('--pscale', pscale);
+    // lid: opens 0.42–0.62
+    const plid = p > 0.42 ? easeOut(clamp((p - 0.42) / 0.20, 0, 1)) : 0;
+    wrapper.style.setProperty('--plid', plid);
+    if (lidBack) lidBack.style.opacity = clamp(1 - plid * 4, 0, 1);
+    if (screen)  screen.style.opacity  = plid > 0.5 ? clamp((plid - 0.5) * 4, 0, 1) : 0;
+  }
+
+  // ── Source-label fade helper ───────────────────────────────────────
+  function driveSourceLabels(containerId, p) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const labels = container.querySelectorAll('.feat-src-label');
+    const show = p >= 0.08 && p < 0.52;
+    labels.forEach((lbl, i) => {
+      lbl.classList.toggle('visible', show && p > 0.08 + i * 0.03);
+    });
+  }
+
+  // ── Phase D · Feature 03 · Knowledge ──────────────────────────────
+  function driveKnowledge(p) {
+    if (p < 0.62) return;
+    const pD = clamp((p - 0.62) / 0.38, 0, 1);
+    const query = 'How is our EMEA expansion connected to Q3 pipeline?';
+    const qEl = document.getElementById('kg-query-text');
+    if (qEl) {
+      const chars = Math.floor(clamp(pD / 0.35, 0, 1) * query.length);
+      qEl.innerHTML = query.substring(0, chars) + '<span class="kg-cursor"></span>';
+    }
+    const graphEl = document.getElementById('kg-graph');
+    if (graphEl) graphEl.classList.toggle('lit', pD > 0.40);
+    const ansEl = document.getElementById('kg-answer');
+    if (ansEl) ansEl.style.opacity = clamp((pD - 0.65) / 0.20, 0, 1);
+  }
+
+  // ── Phase D · Feature 04 · Decision Intelligence ──────────────────
+  function driveDecision(p) {
+    if (p < 0.62) return;
+    const pD = clamp((p - 0.62) / 0.38, 0, 1);
+    const elA  = document.getElementById('di-card-a');
+    const elB  = document.getElementById('di-card-b');
+    const elC  = document.getElementById('di-card-c');
+    const pill = document.getElementById('di-rec-pill');
+    if (elA)  elA.style.opacity  = clamp(pD / 0.20, 0, 1);
+    if (elB)  elB.style.opacity  = clamp((pD - 0.15) / 0.20, 0, 1);
+    if (elC)  elC.style.opacity  = clamp((pD - 0.30) / 0.20, 0, 1);
+    if (pill) pill.style.opacity = clamp((pD - 0.55) / 0.20, 0, 1);
+  }
+
+  // ── Phase D · Feature 05 · Dashboards & BI ────────────────────────
+  function driveDashboards(p) {
+    if (p < 0.62) return;
+    const pD = clamp((p - 0.62) / 0.38, 0, 1);
+    const query = 'Show me revenue by region for Q4 2024';
+    const qEl = document.getElementById('dbi-query-text');
+    if (qEl) {
+      const chars = Math.floor(clamp(pD / 0.35, 0, 1) * query.length);
+      qEl.innerHTML = query.substring(0, chars) + '<span class="dbi-cursor"></span>';
+    }
+    const show = pD > 0.40;
+    [
+      { id: 'dbi-bar-na',    pct: 76 },
+      { id: 'dbi-bar-emea',  pct: 50 },
+      { id: 'dbi-bar-apac',  pct: 35 },
+      { id: 'dbi-bar-latam', pct: 15 },
+    ].forEach(({ id, pct }) => {
+      const el = document.getElementById(id);
+      if (el) el.style.width = show ? pct + '%' : '0%';
+    });
+  }
+
+  // ── Phase D · Feature 06 · DB Analytics ───────────────────────────
+  const DBA_SQL_HTML =
+    '<span class="dba-kw">SELECT</span> customer_name, arr, last_active, churn_reason\n' +
+    '<span class="dba-kw">FROM</span>   customers\n' +
+    '<span class="dba-kw">WHERE</span>  churned_at &gt;= <span class="dba-str">\'2024-07-01\'</span>\n' +
+    '  <span class="dba-kw">AND</span>  arr &gt; 500000\n' +
+    '<span class="dba-kw">ORDER BY</span> arr <span class="dba-kw">DESC</span>\n' +
+    '<span class="dba-kw">LIMIT</span> 10<span class="dba-sc">;</span>';
+
+  function driveDBAnalytics(p) {
+    if (p < 0.62) return;
+    const pD = clamp((p - 0.62) / 0.38, 0, 1);
+    const nlQuery = 'Find customers who churned in last 90 days, sorted by ARR';
+    const nlEl = document.getElementById('dba-nl-text');
+    if (nlEl) {
+      const chars = Math.floor(clamp(pD / 0.35, 0, 1) * nlQuery.length);
+      nlEl.innerHTML = nlQuery.substring(0, chars) + '<span class="dba-nl-cursor"></span>';
+    }
+    const sqlEl = document.getElementById('dba-sql-text');
+    if (sqlEl) sqlEl.innerHTML = pD > 0.42 ? DBA_SQL_HTML : '';
+    const resEl = document.getElementById('dba-results');
+    if (resEl) resEl.style.opacity = clamp((pD - 0.72) / 0.18, 0, 1);
+  }
+
+  function updatePlatformScene() {
+    if (!feat01Section) return;
+    initFeatPaths();
+
+    // ── Feature 01 ────────────────────────────────────────────────────
+    const r1    = feat01Section.getBoundingClientRect();
+    const tot1  = r1.height - window.innerHeight;
+    const p1    = clamp(-r1.top / tot1, 0, 1);
+
+    driveFeatThreads(feat01Paths, p1);
+
+    if (feat01Copy) feat01Copy.style.opacity = clamp((p1 - 0.22) / 0.14, 0, 1);
+
+    driveFeatMac(feat01Wrapper, feat01Lid, feat01LidBack, feat01Screen, p1);
+
+    // ── Feature 02 ────────────────────────────────────────────────────
+    if (!feat02Section) return;
+    const r2    = feat02Section.getBoundingClientRect();
+    const tot2  = r2.height - window.innerHeight;
+    const p2    = clamp(-r2.top / tot2, 0, 1);
+
+    // Parked mac appears as soon as feat02 begins
+    if (feat01Parked) {
+      feat01Parked.classList.toggle('visible', p2 > 0.04);
+    }
+
+    driveFeatThreads(feat02Paths, p2);
+
+    if (feat02Copy) feat02Copy.style.opacity = clamp((p2 - 0.22) / 0.14, 0, 1);
+
+    driveFeatMac(feat02Wrapper, feat02Lid, feat02LidBack, feat02Screen, p2);
+
+    // ── Feature 03 ────────────────────────────────────────────────────
+    if (!feat03Section) return;
+    const r3  = feat03Section.getBoundingClientRect();
+    const p3  = clamp(-r3.top / (r3.height - window.innerHeight), 0, 1);
+    const stk3 = document.getElementById('feat-03-stack');
+    if (stk3) stk3.classList.toggle('visible', p3 > 0.04);
+    driveFeatThreads(feat03Paths, p3);
+    driveSourceLabels('feat-03-labels', p3);
+    if (feat03Copy) feat03Copy.style.opacity = clamp((p3 - 0.22) / 0.14, 0, 1);
+    driveFeatMac(feat03Wrapper, feat03Lid, feat03LidBack, feat03Screen, p3);
+    driveKnowledge(p3);
+
+    // ── Feature 04 ────────────────────────────────────────────────────
+    if (!feat04Section) return;
+    const r4  = feat04Section.getBoundingClientRect();
+    const p4  = clamp(-r4.top / (r4.height - window.innerHeight), 0, 1);
+    const stk4 = document.getElementById('feat-04-stack');
+    if (stk4) stk4.classList.toggle('visible', p4 > 0.04);
+    driveFeatThreads(feat04Paths, p4);
+    driveSourceLabels('feat-04-labels', p4);
+    if (feat04Copy) feat04Copy.style.opacity = clamp((p4 - 0.22) / 0.14, 0, 1);
+    driveFeatMac(feat04Wrapper, feat04Lid, feat04LidBack, feat04Screen, p4);
+    driveDecision(p4);
+
+    // ── Feature 05 ────────────────────────────────────────────────────
+    if (!feat05Section) return;
+    const r5  = feat05Section.getBoundingClientRect();
+    const p5  = clamp(-r5.top / (r5.height - window.innerHeight), 0, 1);
+    const stk5 = document.getElementById('feat-05-stack');
+    if (stk5) stk5.classList.toggle('visible', p5 > 0.04);
+    driveFeatThreads(feat05Paths, p5);
+    driveSourceLabels('feat-05-labels', p5);
+    if (feat05Copy) feat05Copy.style.opacity = clamp((p5 - 0.22) / 0.14, 0, 1);
+    driveFeatMac(feat05Wrapper, feat05Lid, feat05LidBack, feat05Screen, p5);
+    driveDashboards(p5);
+
+    // ── Feature 06 ────────────────────────────────────────────────────
+    if (!feat06Section) return;
+    const r6  = feat06Section.getBoundingClientRect();
+    const p6  = clamp(-r6.top / (r6.height - window.innerHeight), 0, 1);
+    const stk6 = document.getElementById('feat-06-stack');
+    if (stk6) stk6.classList.toggle('visible', p6 > 0.04);
+    driveFeatThreads(feat06Paths, p6);
+    driveSourceLabels('feat-06-labels', p6);
+    if (feat06Copy) feat06Copy.style.opacity = clamp((p6 - 0.22) / 0.14, 0, 1);
+    driveFeatMac(feat06Wrapper, feat06Lid, feat06LidBack, feat06Screen, p6);
+    driveDBAnalytics(p6);
+  }
+
+  // Wire platform scene into its own rAF loop (separate ticking flag)
+  let tickingPlat = false;
+  window.addEventListener('scroll', () => {
+    if (pagePlatform && pagePlatform.style.display !== 'none') {
+      if (!tickingPlat) {
+        requestAnimationFrame(() => { updatePlatformScene(); tickingPlat = false; });
+        tickingPlat = true;
+      }
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
